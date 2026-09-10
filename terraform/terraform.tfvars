@@ -16,7 +16,7 @@ sql_database_name = "MedicineOrdersDB"
 
 sql_admin_username = "pharmaadmin"
 
-sql_admin_password = "YOUR_STRONG_PASSWORD"
+sql_admin_password = "janu@7474"
 
 
 service_bus_namespace_name = "sb-capstone-pharma-001"
@@ -36,4 +36,4 @@ log_analytics_name = "law-capstone-pharma"
 application_insights_name = "appi-capstone-pharma"
 
 
-developer_public_ip = "YOUR_PUBLIC_IP"
+developer_public_ip = "0.0.0.0"

@@ -2,7 +2,7 @@ resource "azurerm_log_analytics_workspace" "main" {
 
   name                = var.log_analytics_name 
 
-  location            = data.azurerm_resource_group.capstone.location 
+  location            = "Central India"
 
   resource_group_name = data.azurerm_resource_group.capstone.name 
 
@@ -21,7 +21,7 @@ resource "azurerm_application_insights" "main" {
 
   name                = var.application_insights_name 
 
-  location            = data.azurerm_resource_group.capstone.location 
+  location            =  "Central India"
 
   resource_group_name = data.azurerm_resource_group.capstone.name 
 

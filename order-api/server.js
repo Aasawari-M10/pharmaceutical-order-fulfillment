@@ -1,15 +1,16 @@
 const express = require("express");
-require("dotenv").config();
 
 const app = express();
 
 app.use(express.json());
 
-const orderRoutes = require("./routes/orders");
-
-app.use("/orders", orderRoutes);
+app.use("/orders", require("./routes/createOrder"));
+app.use("/orders", require("./routes/getOrder"));
+app.use("/orders", require("./routes/updateOrderStatus"));
+app.use("/orders", require("./routes/getOrdersByStatus"));
 
 app.get("/health", (req, res) => {
+
     res.json({
         status: "UP"
     });
@@ -18,5 +19,6 @@ app.get("/health", (req, res) => {
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
+
     console.log(`Server running on port ${PORT}`);
 });

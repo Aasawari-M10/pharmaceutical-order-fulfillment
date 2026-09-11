@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const { sql, poolPromise } = require("../db");
+const { sendOrderMessage } = require("../serviceBus");
 
 router.post("/", async (req, res) => {
 
@@ -17,6 +18,7 @@ router.post("/", async (req, res) => {
         } = req.body;
 
         if (!orderId || !medicineCode || quantity <= 0) {
+
             return res.status(400).json({
                 message: "Invalid Order"
             });
@@ -35,30 +37,43 @@ router.post("/", async (req, res) => {
             .query(`
                 INSERT INTO MedicineOrders
                 (
-                  OrderId,
-                  CustomerType,
-                  CustomerId,
-                  MedicineCode,
-                  Quantity,
-                  Priority,
-                  Status
+                    OrderId,
+                    CustomerType,
+                    CustomerId,
+                    MedicineCode,
+                    Quantity,
+                    Priority,
+                    Status
                 )
                 VALUES
                 (
-                  @OrderId,
-                  @CustomerType,
-                  @CustomerId,
-                  @MedicineCode,
-                  @Quantity,
-                  @Priority,
-                  @Status
+                    @OrderId,
+                    @CustomerType,
+                    @CustomerId,
+                    @MedicineCode,
+                    @Quantity,
+                    @Priority,
+                    @Status
                 )
             `);
+
+        const orderMessage = {
+            orderId,
+            customerType,
+            customerId,
+            medicineCode,
+            quantity,
+            priority,
+            status: "PENDING"
+        };
+
+        await sendOrderMessage(orderMessage);
 
         res.status(201).json({
             message: "Order Created",
             orderId,
-            status: "PENDING"
+            status: "PENDING",
+            queue: "order-fulfillment"
         });
 
     } catch (error) {

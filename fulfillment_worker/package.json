@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "@azure/service-bus": "^7.9.5",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mssql": "^12.7.2"
+  }
+}

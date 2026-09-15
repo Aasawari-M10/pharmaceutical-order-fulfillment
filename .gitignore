@@ -1,0 +1,38 @@
+# Environment files
+.env
+.env.*
+
+# Node modules
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+terraform.tfvars
+.terraform.lock.hcl
+
+# Azure
+.azure/
+
+# Coverage
+coverage/
+
+# Build artifacts
+dist/
+build/
+
+# VS Code
+.vscode/
+
+# IntelliJ
+.idea/

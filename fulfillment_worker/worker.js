@@ -7,17 +7,11 @@ const {
     checkAndReserveStock
 } = require("./inventoryService");
 
-const delay = (ms) =>
-    new Promise(resolve =>
-        setTimeout(resolve, ms)
-    );
-
 async function updateStatus(
     orderId,
     status,
     statusMessage = null
 ) {
-
     const pool = await poolPromise;
 
     await pool.request()
@@ -55,42 +49,8 @@ async function processOrder(message) {
         await updateStatus(
             order.orderId,
             "PROCESSING",
-            `Priority: ${order.priority}`
+            "Inventory validation started"
         );
-
-        /*
-         * PRIORITY CHECK FIRST
-         */
-
-        let processingDelay = 10000;
-
-        const priority =
-            String(
-                order.priority || "NORMAL"
-            ).toUpperCase();
-
-        if (
-            priority === "URGENT"
-        ) {
-
-            processingDelay = 2000;
-        }
-
-        console.log(
-            `[PRIORITY] ${order.orderId} = ${priority}`
-        );
-
-        console.log(
-            `[WAIT] ${order.orderId} sleeping for ${processingDelay} ms`
-        );
-
-        await delay(
-            processingDelay
-        );
-
-        /*
-         * INVENTORY CHECK AFTER PRIORITY DELAY
-         */
 
         const stockResult =
             await checkAndReserveStock(
@@ -98,54 +58,55 @@ async function processOrder(message) {
                 order.quantity
             );
 
+        console.log(
+            "[INVENTORY RESULT]",
+            stockResult
+        );
+
         if (!stockResult.success) {
+
+            let cancellationReason =
+                "UNKNOWN_ERROR";
 
             if (
                 stockResult.reason ===
                 "MEDICINE_NOT_FOUND"
             ) {
 
-                await updateStatus(
-                    order.orderId,
-                    "CANCELLED",
-                    "MEDICINE_NOT_FOUND"
-                );
-
-                return;
+                cancellationReason =
+                    `MEDICINE_NOT_FOUND: ${order.medicineCode}`;
             }
 
-            if (
+            else if (
                 stockResult.reason ===
                 "OUT_OF_STOCK"
             ) {
 
-                await updateStatus(
-                    order.orderId,
-                    "CANCELLED",
-                    `OUT_OF_STOCK: requested ${order.quantity}, available ${stockResult.availableQuantity}`
-                );
-
-                return;
+                cancellationReason =
+                    `OUT_OF_STOCK: requested ${order.quantity}, available ${stockResult.availableQuantity}`;
             }
 
-            if (
+            else if (
                 stockResult.reason ===
                 "INVALID_QUANTITY"
             ) {
 
-                await updateStatus(
-                    order.orderId,
-                    "CANCELLED",
-                    "INVALID_QUANTITY"
-                );
-
-                return;
+                cancellationReason =
+                    `INVALID_QUANTITY: ${order.quantity}`;
             }
-        }
 
-        /*
-         * ORDER FULFILLED
-         */
+            await updateStatus(
+                order.orderId,
+                "CANCELLED",
+                cancellationReason
+            );
+
+            console.log(
+                `[CANCELLED] ${order.orderId} - ${cancellationReason}`
+            );
+
+            return;
+        }
 
         await updateStatus(
             order.orderId,
@@ -171,8 +132,9 @@ async function processOrder(message) {
         );
     }
 }
-receiver.subscribe({
 
+receiver.subscribe(
+{
     processMessage: async (
         message
     ) => {

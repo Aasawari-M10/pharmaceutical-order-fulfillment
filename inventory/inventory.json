@@ -1,0 +1,305 @@
+{
+  "inventoryVersion": 1,
+  "items": {
+    "MED0001": {
+      "medicineName": "Paracetamol",
+      "strength": "500 mg",
+      "form": "Tablet",
+      "availableQuantity": 500
+    },
+    "MED0002": {
+      "medicineName": "Ibuprofen",
+      "strength": "400 mg",
+      "form": "Tablet",
+      "availableQuantity": 300
+    },
+    "MED0003": {
+      "medicineName": "Amoxicillin",
+      "strength": "500 mg",
+      "form": "Capsule",
+      "availableQuantity": 250
+    },
+    "MED0004": {
+      "medicineName": "Azithromycin",
+      "strength": "500 mg",
+      "form": "Tablet",
+      "availableQuantity": 180
+    },
+    "MED0005": {
+      "medicineName": "Cetirizine",
+      "strength": "10 mg",
+      "form": "Tablet",
+      "availableQuantity": 450
+    },
+    "MED0006": {
+      "medicineName": "Metformin",
+      "strength": "500 mg",
+      "form": "Tablet",
+      "availableQuantity": 600
+    },
+    "MED0007": {
+      "medicineName": "Amlodipine",
+      "strength": "5 mg",
+      "form": "Tablet",
+      "availableQuantity": 350
+    },
+    "MED0008": {
+      "medicineName": "Atorvastatin",
+      "strength": "10 mg",
+      "form": "Tablet",
+      "availableQuantity": 320
+    },
+    "MED0009": {
+      "medicineName": "Omeprazole",
+      "strength": "20 mg",
+      "form": "Capsule",
+      "availableQuantity": 400
+    },
+    "MED0010": {
+      "medicineName": "Pantoprazole",
+      "strength": "40 mg",
+      "form": "Tablet",
+      "availableQuantity": 420
+    },
+    "MED0011": {
+      "medicineName": "Losartan",
+      "strength": "50 mg",
+      "form": "Tablet",
+      "availableQuantity": 260
+    },
+    "MED0012": {
+      "medicineName": "Telmisartan",
+      "strength": "40 mg",
+      "form": "Tablet",
+      "availableQuantity": 280
+    },
+    "MED0013": {
+      "medicineName": "Aspirin",
+      "strength": "75 mg",
+      "form": "Tablet",
+      "availableQuantity": 500
+    },
+    "MED0014": {
+      "medicineName": "Clopidogrel",
+      "strength": "75 mg",
+      "form": "Tablet",
+      "availableQuantity": 210
+    },
+    "MED0015": {
+      "medicineName": "Doxycycline",
+      "strength": "100 mg",
+      "form": "Capsule",
+      "availableQuantity": 150
+    },
+    "MED0016": {
+      "medicineName": "Ciprofloxacin",
+      "strength": "500 mg",
+      "form": "Tablet",
+      "availableQuantity": 175
+    },
+    "MED0017": {
+      "medicineName": "Levofloxacin",
+      "strength": "500 mg",
+      "form": "Tablet",
+      "availableQuantity": 140
+    },
+    "MED0018": {
+      "medicineName": "Montelukast",
+      "strength": "10 mg",
+      "form": "Tablet",
+      "availableQuantity": 230
+    },
+    "MED0019": {
+      "medicineName": "Salbutamol",
+      "strength": "100 mcg",
+      "form": "Inhaler",
+      "availableQuantity": 90
+    },
+    "MED0020": {
+      "medicineName": "Budesonide",
+      "strength": "200 mcg",
+      "form": "Inhaler",
+      "availableQuantity": 75
+    },
+    "MED0021": {
+      "medicineName": "Insulin Regular",
+      "strength": "100 IU/ml",
+      "form": "Injection",
+      "availableQuantity": 60
+    },
+    "MED0022": {
+      "medicineName": "Insulin Glargine",
+      "strength": "100 IU/ml",
+      "form": "Injection",
+      "availableQuantity": 45
+    },
+    "MED0023": {
+      "medicineName": "Glimepiride",
+      "strength": "2 mg",
+      "form": "Tablet",
+      "availableQuantity": 240
+    },
+    "MED0024": {
+      "medicineName": "Levothyroxine",
+      "strength": "50 mcg",
+      "form": "Tablet",
+      "availableQuantity": 310
+    },
+    "MED0025": {
+      "medicineName": "Prednisolone",
+      "strength": "5 mg",
+      "form": "Tablet",
+      "availableQuantity": 190
+    },
+    "MED0026": {
+      "medicineName": "Hydrocortisone",
+      "strength": "100 mg",
+      "form": "Injection",
+      "availableQuantity": 55
+    },
+    "MED0027": {
+      "medicineName": "Diclofenac",
+      "strength": "50 mg",
+      "form": "Tablet",
+      "availableQuantity": 330
+    },
+    "MED0028": {
+      "medicineName": "Naproxen",
+      "strength": "250 mg",
+      "form": "Tablet",
+      "availableQuantity": 160
+    },
+    "MED0029": {
+      "medicineName": "Tramadol",
+      "strength": "50 mg",
+      "form": "Capsule",
+      "availableQuantity": 100
+    },
+    "MED0030": {
+      "medicineName": "Ondansetron",
+      "strength": "4 mg",
+      "form": "Tablet",
+      "availableQuantity": 220
+    },
+    "MED0031": {
+      "medicineName": "Domperidone",
+      "strength": "10 mg",
+      "form": "Tablet",
+      "availableQuantity": 205
+    },
+    "MED0032": {
+      "medicineName": "Loperamide",
+      "strength": "2 mg",
+      "form": "Capsule",
+      "availableQuantity": 185
+    },
+    "MED0033": {
+      "medicineName": "Oral Rehydration Salts",
+      "strength": "Standard Sachet",
+      "form": "Powder",
+      "availableQuantity": 450
+    },
+    "MED0034": {
+      "medicineName": "Calcium Carbonate",
+      "strength": "500 mg",
+      "form": "Tablet",
+      "availableQuantity": 380
+    },
+    "MED0035": {
+      "medicineName": "Vitamin D3",
+      "strength": "1000 IU",
+      "form": "Tablet",
+      "availableQuantity": 360
+    },
+    "MED0036": {
+      "medicineName": "Vitamin B Complex",
+      "strength": "Standard",
+      "form": "Tablet",
+      "availableQuantity": 340
+    },
+    "MED0037": {
+      "medicineName": "Ferrous Sulfate",
+      "strength": "200 mg",
+      "form": "Tablet",
+      "availableQuantity": 270
+    },
+    "MED0038": {
+      "medicineName": "Folic Acid",
+      "strength": "5 mg",
+      "form": "Tablet",
+      "availableQuantity": 400
+    },
+    "MED0039": {
+      "medicineName": "Fluconazole",
+      "strength": "150 mg",
+      "form": "Capsule",
+      "availableQuantity": 125
+    },
+    "MED0040": {
+      "medicineName": "Clotrimazole",
+      "strength": "1 percent",
+      "form": "Cream",
+      "availableQuantity": 115
+    },
+    "MED0041": {
+      "medicineName": "Acyclovir",
+      "strength": "400 mg",
+      "form": "Tablet",
+      "availableQuantity": 130
+    },
+    "MED0042": {
+      "medicineName": "Metronidazole",
+      "strength": "400 mg",
+      "form": "Tablet",
+      "availableQuantity": 195
+    },
+    "MED0043": {
+      "medicineName": "Cefixime",
+      "strength": "200 mg",
+      "form": "Tablet",
+      "availableQuantity": 155
+    },
+    "MED0044": {
+      "medicineName": "Ceftriaxone",
+      "strength": "1 g",
+      "form": "Injection",
+      "availableQuantity": 85
+    },
+    "MED0045": {
+      "medicineName": "Lisinopril",
+      "strength": "10 mg",
+      "form": "Tablet",
+      "availableQuantity": 200
+    },
+    "MED0046": {
+      "medicineName": "Propranolol",
+      "strength": "40 mg",
+      "form": "Tablet",
+      "availableQuantity": 170
+    },
+    "MED0047": {
+      "medicineName": "Furosemide",
+      "strength": "40 mg",
+      "form": "Tablet",
+      "availableQuantity": 145
+    },
+    "MED0048": {
+      "medicineName": "Spironolactone",
+      "strength": "25 mg",
+      "form": "Tablet",
+      "availableQuantity": 135
+    },
+    "MED0049": {
+      "medicineName": "Gabapentin",
+      "strength": "300 mg",
+      "form": "Capsule",
+      "availableQuantity": 165
+    },
+    "MED0050": {
+      "medicineName": "Carbamazepine",
+      "strength": "200 mg",
+      "form": "Tablet",
+      "availableQuantity": 120
+    }
+  }
+}

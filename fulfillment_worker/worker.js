@@ -7,7 +7,7 @@ const {
     checkAndReserveStock
 } = require("./inventoryService");
 
-const delay = milliseconds =>
+const delay = (milliseconds) =>
     new Promise(resolve =>
         setTimeout(resolve, milliseconds)
     );
@@ -17,28 +17,15 @@ async function updateStatus(
     status,
     statusMessage = null
 ) {
+
     const pool = await poolPromise;
 
-    if (!pool) {
-        throw new Error(
-            "Azure SQL connection is unavailable"
-        );
-    }
-
-    const result = await pool.request()
-        .input(
-            "OrderId",
-            sql.VarChar(30),
-            orderId
-        )
-        .input(
-            "Status",
-            sql.VarChar(30),
-            status
-        )
+    await pool.request()
+        .input("OrderId", sql.VarChar, orderId)
+        .input("Status", sql.VarChar, status)
         .input(
             "StatusMessage",
-            sql.VarChar(200),
+            sql.VarChar,
             statusMessage
         )
         .query(`
@@ -49,222 +36,156 @@ async function updateStatus(
             WHERE OrderId = @OrderId
         `);
 
-    if (result.rowsAffected[0] === 0) {
-        throw new Error(
-            `Order ${orderId} was not found`
-        );
-    }
-
     console.log(
         `Order ${orderId} updated to ${status}`
     );
-
-    if (statusMessage) {
-        console.log(
-            `Status message: ${statusMessage}`
-        );
-    }
-}
-
-function validateQueueMessage(order) {
-    if (!order) {
-        return "Message body is missing";
-    }
-
-    if (!order.orderId) {
-        return "orderId is missing";
-    }
-
-    if (!order.medicineCode) {
-        return "medicineCode is missing";
-    }
-
-    const quantity = Number(order.quantity);
-
-    if (!Number.isInteger(quantity) || quantity <= 0) {
-        return "quantity must be a positive integer";
-    }
-
-    return null;
 }
 
 async function processOrder(message) {
-    const order = message.body;
 
-    const validationError =
-        validateQueueMessage(order);
+    try {
 
-    if (validationError) {
-        throw new Error(
-            `Invalid Service Bus message: ${validationError}`
-        );
-    }
+        const order = message.body;
 
-    const orderId =
-        String(order.orderId).trim();
-
-    const medicineCode =
-        String(order.medicineCode)
-            .trim()
-            .toUpperCase();
-
-    const quantity =
-        Number(order.quantity);
-
-    console.log("Received order:", {
-        orderId,
-        medicineCode,
-        quantity
-    });
-
-    /*
-     * The order is already PENDING because the Order API
-     * inserted it into Azure SQL.
-     */
-
-    await updateStatus(
-        orderId,
-        "PROCESSING",
-        "Checking medicine inventory"
-    );
-
-    const stockResult =
-        await checkAndReserveStock(
-            medicineCode,
-            quantity
+        console.log(
+            "Received Order:",
+            order
         );
 
-    if (!stockResult.success) {
-        if (
-            stockResult.reason ===
-            "MEDICINE_NOT_FOUND"
-        ) {
-            await updateStatus(
-                orderId,
-                "CANCELLED",
-                `MEDICINE_NOT_FOUND: ${medicineCode} ` +
-                "does not exist in inventory"
+        await updateStatus(
+            order.orderId,
+            "PROCESSING",
+            `Priority: ${order.priority}`
+        );
+
+        const stockResult =
+            await checkAndReserveStock(
+                order.medicineCode,
+                order.quantity
             );
 
-            console.log(
-                `Order ${orderId} cancelled because ` +
-                `${medicineCode} was not found`
-            );
+        /*
+         * Inventory Validation
+         */
 
-            return;
-        }
+        if (!stockResult.success) {
 
-        if (
-            stockResult.reason ===
-            "OUT_OF_STOCK"
-        ) {
-            await updateStatus(
-                orderId,
-                "CANCELLED",
-                `OUT_OF_STOCK: requested ${quantity}, ` +
-                `available ${stockResult.availableQuantity}`
-            );
+            if (
+                stockResult.reason ===
+                "MEDICINE_NOT_FOUND"
+            ) {
 
-            console.log(
-                `Order ${orderId} cancelled due to ` +
-                "insufficient stock"
-            );
+                await updateStatus(
+                    order.orderId,
+                    "CANCELLED",
+                    "MEDICINE_NOT_FOUND"
+                );
 
-            return;
-        }
+                return;
+            }
 
-        if (
-            stockResult.reason ===
-            "INVALID_QUANTITY"
-        ) {
-            await updateStatus(
-                orderId,
-                "CANCELLED",
+            if (
+                stockResult.reason ===
+                "OUT_OF_STOCK"
+            ) {
+
+                await updateStatus(
+                    order.orderId,
+                    "CANCELLED",
+                    `OUT_OF_STOCK: requested ${order.quantity}, available ${stockResult.availableQuantity}`
+                );
+
+                return;
+            }
+
+            if (
+                stockResult.reason ===
                 "INVALID_QUANTITY"
-            );
+            ) {
 
-            return;
+                await updateStatus(
+                    order.orderId,
+                    "CANCELLED",
+                    "INVALID_QUANTITY"
+                );
+
+                return;
+            }
         }
 
-        throw new Error(
-            `Unhandled inventory result for order ${orderId}`
+        /*
+         * Priority Business Logic
+         *
+         * URGENT  -> 2 seconds
+         * NORMAL  -> 10 seconds
+         */
+
+        let processingDelay = 10000;
+
+        if (
+            order.priority &&
+            order.priority.toUpperCase() ===
+            "URGENT"
+        ) {
+
+            processingDelay = 2000;
+
+            console.log(
+                `URGENT Order ${order.orderId} detected`
+            );
+        }
+
+        console.log(
+            `Processing Order ${order.orderId} for ${processingDelay / 1000} seconds`
+        );
+
+        await delay(processingDelay);
+
+        /*
+         * Fulfillment Completed
+         */
+
+        await updateStatus(
+            order.orderId,
+            "FULFILLED",
+            `Medicine allocated successfully. Remaining stock: ${stockResult.remainingQuantity}`
+        );
+
+        console.log(
+            `Order ${order.orderId} fulfilled successfully`
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Processing Error:",
+            error
         );
     }
-
-    console.log(
-        `Stock reserved for ${orderId}:`,
-        {
-            medicineCode:
-                stockResult.medicineCode,
-
-            medicineName:
-                stockResult.medicineName,
-
-            requestedQuantity:
-                stockResult.requestedQuantity,
-
-            remainingQuantity:
-                stockResult.remainingQuantity
-        }
-    );
-
-    /*
-     * Simulated medicine allocation and fulfillment.
-     */
-    await delay(5000);
-
-    await updateStatus(
-        orderId,
-        "FULFILLED",
-        `Medicine allocated successfully. ` +
-        `Remaining stock: ${stockResult.remainingQuantity}`
-    );
-
-    console.log(
-        `Order ${orderId} fulfilled successfully`
-    );
 }
 
-const subscription = receiver.subscribe({
-    processMessage: async message => {
-        try {
-            await processOrder(message);
-        } catch (error) {
-            console.error(
-                "Order processing failed:",
-                error
-            );
+receiver.subscribe({
 
-            /*
-             * Re-throw the error.
-             * Service Bus will treat processing as failed
-             * instead of silently completing the message.
-             */
-            throw error;
-        }
+    processMessage: async (
+        message
+    ) => {
+
+        await processOrder(
+            message
+        );
     },
 
-    processError: async args => {
+    processError: async (
+        args
+    ) => {
+
         console.error(
-            "Service Bus receiver error:",
+            "Service Bus Error:",
             args.error
         );
     }
+
 });
-
-async function shutdown() {
-    console.log(
-        "Stopping Fulfillment Worker..."
-    );
-
-    await subscription.close();
-    await receiver.close();
-
-    process.exit(0);
-}
-
-process.on("SIGINT", shutdown);
-process.on("SIGTERM", shutdown);
 
 console.log(
     "Fulfillment Worker Listening..."

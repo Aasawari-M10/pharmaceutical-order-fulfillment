@@ -6,10 +6,7 @@ const {
     getInventory
 } = require("../inventoryService");
 
-router.get("/medicines", async (
-    req,
-    res
-) => {
+router.get("/medicines", async (req, res) => {
 
     try {
 
@@ -20,21 +17,12 @@ router.get("/medicines", async (
             Object.entries(
                 inventory.items
             ).map(
-                ([code, medicine]) => ({
+                ([medicineCode, medicine]) => ({
 
-                    medicineCode: code,
+                    medicineCode,
 
                     medicineName:
-                        medicine.medicineName,
-
-                    strength:
-                        medicine.strength,
-
-                    form:
-                        medicine.form,
-
-                    availableQuantity:
-                        medicine.availableQuantity
+                        medicine.medicineName
                 })
             );
 
@@ -48,7 +36,7 @@ router.get("/medicines", async (
 
         res.status(500).json({
             error:
-                "Unable to retrieve medicines"
+                "Unable to fetch medicines"
         });
     }
 });

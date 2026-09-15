@@ -7,9 +7,9 @@ const {
     checkAndReserveStock
 } = require("./inventoryService");
 
-const delay = (milliseconds) =>
+const delay = (ms) =>
     new Promise(resolve =>
-        setTimeout(resolve, milliseconds)
+        setTimeout(resolve, ms)
     );
 
 async function updateStatus(
@@ -37,18 +37,18 @@ async function updateStatus(
         `);
 
     console.log(
-        `Order ${orderId} updated to ${status}`
+        `[SQL] ${orderId} -> ${status}`
     );
 }
 
 async function processOrder(message) {
 
+    const order = message.body;
+
     try {
 
-        const order = message.body;
-
         console.log(
-            "Received Order:",
+            `[RECEIVED]`,
             order
         );
 
@@ -63,10 +63,6 @@ async function processOrder(message) {
                 order.medicineCode,
                 order.quantity
             );
-
-        /*
-         * Inventory Validation
-         */
 
         if (!stockResult.success) {
 
@@ -113,37 +109,31 @@ async function processOrder(message) {
             }
         }
 
-        /*
-         * Priority Business Logic
-         *
-         * URGENT  -> 2 seconds
-         * NORMAL  -> 10 seconds
-         */
-
         let processingDelay = 10000;
 
+        const priority =
+            String(
+                order.priority || "NORMAL"
+            ).toUpperCase();
+
         if (
-            order.priority &&
-            order.priority.toUpperCase() ===
-            "URGENT"
+            priority === "URGENT"
         ) {
 
             processingDelay = 2000;
-
-            console.log(
-                `URGENT Order ${order.orderId} detected`
-            );
         }
 
         console.log(
-            `Processing Order ${order.orderId} for ${processingDelay / 1000} seconds`
+            `[PRIORITY] ${order.orderId} = ${priority}`
         );
 
-        await delay(processingDelay);
+        console.log(
+            `[WAIT] ${order.orderId} sleeping for ${processingDelay} ms`
+        );
 
-        /*
-         * Fulfillment Completed
-         */
+        await delay(
+            processingDelay
+        );
 
         await updateStatus(
             order.orderId,
@@ -152,14 +142,20 @@ async function processOrder(message) {
         );
 
         console.log(
-            `Order ${order.orderId} fulfilled successfully`
+            `[FULFILLED] ${order.orderId}`
         );
 
     } catch (error) {
 
         console.error(
-            "Processing Error:",
+            `[ERROR] ${order.orderId}`,
             error
+        );
+
+        await updateStatus(
+            order.orderId,
+            "FAILED",
+            error.message
         );
     }
 }
@@ -180,11 +176,14 @@ receiver.subscribe({
     ) => {
 
         console.error(
-            "Service Bus Error:",
+            "[SERVICE BUS ERROR]",
             args.error
         );
     }
 
+},
+{
+    maxConcurrentCalls: 5
 });
 
 console.log(

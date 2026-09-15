@@ -194,7 +194,7 @@ receiver.subscribe({
 
 },
 {
-    maxConcurrentCalls: 5
+    maxConcurrentCalls: 1
 });
 
 console.log(

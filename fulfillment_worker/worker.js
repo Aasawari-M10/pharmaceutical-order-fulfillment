@@ -48,7 +48,7 @@ async function processOrder(message) {
     try {
 
         console.log(
-            `[RECEIVED]`,
+            "[RECEIVED]",
             order
         );
 
@@ -57,6 +57,40 @@ async function processOrder(message) {
             "PROCESSING",
             `Priority: ${order.priority}`
         );
+
+        /*
+         * PRIORITY CHECK FIRST
+         */
+
+        let processingDelay = 10000;
+
+        const priority =
+            String(
+                order.priority || "NORMAL"
+            ).toUpperCase();
+
+        if (
+            priority === "URGENT"
+        ) {
+
+            processingDelay = 2000;
+        }
+
+        console.log(
+            `[PRIORITY] ${order.orderId} = ${priority}`
+        );
+
+        console.log(
+            `[WAIT] ${order.orderId} sleeping for ${processingDelay} ms`
+        );
+
+        await delay(
+            processingDelay
+        );
+
+        /*
+         * INVENTORY CHECK AFTER PRIORITY DELAY
+         */
 
         const stockResult =
             await checkAndReserveStock(
@@ -109,31 +143,9 @@ async function processOrder(message) {
             }
         }
 
-        let processingDelay = 10000;
-
-        const priority =
-            String(
-                order.priority || "NORMAL"
-            ).toUpperCase();
-
-        if (
-            priority === "URGENT"
-        ) {
-
-            processingDelay = 2000;
-        }
-
-        console.log(
-            `[PRIORITY] ${order.orderId} = ${priority}`
-        );
-
-        console.log(
-            `[WAIT] ${order.orderId} sleeping for ${processingDelay} ms`
-        );
-
-        await delay(
-            processingDelay
-        );
+        /*
+         * ORDER FULFILLED
+         */
 
         await updateStatus(
             order.orderId,
@@ -159,7 +171,6 @@ async function processOrder(message) {
         );
     }
 }
-
 receiver.subscribe({
 
     processMessage: async (

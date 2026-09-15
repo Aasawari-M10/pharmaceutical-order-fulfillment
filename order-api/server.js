@@ -8,6 +8,10 @@ app.use("/orders", require("./routes/createOrder"));
 app.use("/orders", require("./routes/getOrder"));
 app.use("/orders", require("./routes/updateOrderStatus"));
 app.use("/orders", require("./routes/getOrdersByStatus"));
+app.use(
+    "/",
+    require("./routes/getMedicines")
+);
 
 app.get("/health", (req, res) => {
 

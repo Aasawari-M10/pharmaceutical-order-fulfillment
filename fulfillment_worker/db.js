@@ -1,4 +1,5 @@
 const sql = require("mssql");
+
 require("dotenv").config();
 
 const config = {
@@ -10,18 +11,25 @@ const config = {
     options: {
         encrypt: true,
         trustServerCertificate: false
+    },
+
+    pool: {
+        max: 10,
+        min: 0,
+        idleTimeoutMillis: 30000
     }
 };
 
-const poolPromise = new sql.ConnectionPool(config)
-    .connect()
-    .then(pool => {
-        console.log("Connected to Azure SQL");
-        return pool;
-    })
-    .catch(err => {
-        console.error("Database Connection Failed", err);
-    });
+const poolPromise =
+    new sql.ConnectionPool(config)
+        .connect()
+        .then(pool => {
+            console.log(
+                "Fulfillment Worker connected to Azure SQL"
+            );
+
+            return pool;
+        });
 
 module.exports = {
     sql,

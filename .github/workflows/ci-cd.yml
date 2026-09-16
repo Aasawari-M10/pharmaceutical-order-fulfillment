@@ -1,0 +1,158 @@
+name: Pharma Platform CI/CD
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "order-api/**"
+      - "fulfillment_worker/**"
+      - ".github/workflows/ci-cd.yml"
+
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "order-api/**"
+      - "fulfillment_worker/**"
+      - ".github/workflows/ci-cd.yml"
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  NODE_VERSION: "22"
+  REGISTRY: ghcr.io
+  ORDER_API_IMAGE: ghcr.io/aasawari-m10/pharma-order-api
+  WORKER_IMAGE: ghcr.io/aasawari-m10/pharma-fulfillment-worker
+
+jobs:
+  validate:
+    name: Validate Node.js applications
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: |
+            order-api/package-lock.json
+            fulfillment_worker/package-lock.json
+
+      - name: Install Order API dependencies
+        working-directory: order-api
+        run: npm ci
+
+      - name: Check Order API syntax
+        working-directory: order-api
+        run: |
+          node --check server.js
+          node --check db.js
+          node --check serviceBus.js
+          node --check inventoryService.js
+          for file in routes/*.js; do
+            node --check "$file"
+          done
+
+      - name: Install Worker dependencies
+        working-directory: fulfillment_worker
+        run: npm ci
+
+      - name: Check Worker syntax
+        working-directory: fulfillment_worker
+        run: |
+          node --check worker.js
+          node --check db.js
+          node --check serviceBus.js
+          node --check inventoryService.js
+          node --check healthServer.js
+
+  build-and-push:
+    name: Build and push container images
+    needs: validate
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+
+    outputs:
+      image_tag: ${{ steps.image-tag.outputs.value }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate commit image tag
+        id: image-tag
+        shell: bash
+        run: |
+          SHORT_SHA="${GITHUB_SHA::7}"
+          echo "value=sha-${SHORT_SHA}" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Sign in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Order API image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./order-api
+          file: ./order-api/Dockerfile
+          push: true
+          tags: |
+            ${{ env.ORDER_API_IMAGE }}:${{ steps.image-tag.outputs.value }}
+            ${{ env.ORDER_API_IMAGE }}:latest
+          cache-from: type=gha,scope=order-api
+          cache-to: type=gha,mode=max,scope=order-api
+
+      - name: Build and push Worker image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./fulfillment_worker
+          file: ./fulfillment_worker/Dockerfile
+          push: true
+          tags: |
+            ${{ env.WORKER_IMAGE }}:${{ steps.image-tag.outputs.value }}
+            ${{ env.WORKER_IMAGE }}:latest
+          cache-from: type=gha,scope=fulfillment-worker
+          cache-to: type=gha,mode=max,scope=fulfillment-worker
+
+  deploy-order-api:
+    name: Deploy Order API
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    environment: development
+
+    steps:
+      - name: Deploy Order API container
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: app-capstone-order-api
+          publish-profile: ${{ secrets.ORDER_API_PUBLISH_PROFILE }}
+          images: ${{ env.ORDER_API_IMAGE }}:${{ needs.build-and-push.outputs.image_tag }}
+
+  deploy-worker:
+    name: Deploy Fulfillment Worker
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    environment: development
+
+    steps:
+      - name: Deploy Worker container
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: app-capstone-worker
+          publish-profile: ${{ secrets.WORKER_PUBLISH_PROFILE }}
+          images: ${{ env.WORKER_IMAGE }}:${{ needs.build-and-push.outputs.image_tag }}

@@ -1,4 +1,5 @@
 require("dotenv").config();
+require("./healthServer");
 
 const { receiver } = require("./serviceBus");
 const { sql, poolPromise } = require("./db");

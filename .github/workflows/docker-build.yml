@@ -1,0 +1,30 @@
+name: Build Docker Images
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+
+  build-order-api:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build Order API
+        run: |
+          docker build -t order-api:v1 ./order-api
+
+  build-worker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build Worker
+        run: |
+          docker build -t fulfillment-worker:v1 ./fulfillment-worker

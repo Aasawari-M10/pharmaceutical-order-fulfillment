@@ -7,7 +7,8 @@ const {
 
 require("dotenv").config();
 
-
+const inventoryBlobName =
+    process.env.INVENTORY_BLOB || "inventory.json";
 const blobServiceClient =
 
     BlobServiceClient.fromConnectionString(
@@ -24,8 +25,7 @@ const containerClient =
         process.env.INVENTORY_CONTAINER
 
     );
-console.log("Storage String Exists:", !!storageConnectionString);
-console.log("Container Name:", containerName);
+
 console.log("Inventory Blob:", inventoryBlobName);
 const blobClient =
 

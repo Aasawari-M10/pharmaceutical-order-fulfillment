@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "worker.js",
   "scripts": {
-    "start": "node worker.js"
+    "start": "node worker.js",
+    "check": "node --check worker.js"
   },
   "dependencies": {
     "@azure/service-bus": "^7.9.5",

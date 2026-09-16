@@ -103,7 +103,7 @@ jobs:
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
-          password: ${{ secrets.GHCR_TOKENN }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push Order API image
         uses: docker/build-push-action@v6

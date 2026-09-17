@@ -3,10 +3,10 @@ resource "azurerm_api_management" "apim" {
   name                = var.apim_name
 
 
-  location            = azurerm_resource_group.capstone.location
+  location            = data.azurerm_resource_group.capstone.location
 
 
-  resource_group_name = azurerm_resource_group.capstone.name
+  resource_group_name = data.azurerm_resource_group.capstone.name
 
 
   publisher_name      = var.publisher_name

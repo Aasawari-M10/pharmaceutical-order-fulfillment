@@ -30,7 +30,17 @@ app_settings = {
     SERVICE_BUS_NAMESPACE = azurerm_servicebus_namespace.main.name
     SERVICE_BUS_QUEUE     = azurerm_servicebus_queue.order_fulfillment.name
   }
+  lifecycle {
 
+  ignore_changes = [
+
+    app_settings,
+
+    site_config
+
+  ]
+
+}
   tags = local.common_tags
 }
 resource "azurerm_linux_web_app" "fulfillment_worker" {
@@ -56,6 +66,16 @@ resource "azurerm_linux_web_app" "fulfillment_worker" {
     SERVICE_BUS_NAMESPACE = azurerm_servicebus_namespace.main.name
     SERVICE_BUS_QUEUE     = azurerm_servicebus_queue.order_fulfillment.name
   }
+lifecycle {
 
+  ignore_changes = [
+
+    app_settings,
+
+    site_config
+
+  ]
+
+}
   tags = local.common_tags
 }

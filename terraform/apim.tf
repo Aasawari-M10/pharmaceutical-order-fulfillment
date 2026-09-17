@@ -1,25 +1,19 @@
 resource "azurerm_api_management" "apim" {
 
-  name                = "apim-capstone-pharma-001"
-
-  location            = azurerm_resource_group.rg.location
-
-  resource_group_name = azurerm_resource_group.rg.name
+  name                = var.apim_name
 
 
-  publisher_name  = "Pharmaceutical Order Fulfillment Team"
+  location            = azurerm_resource_group.capstone.location
 
-  publisher_email = "aasawarirm2004@gmail.com"
+
+  resource_group_name = azurerm_resource_group.capstone.name
+
+
+  publisher_name      = var.publisher_name
+
+  publisher_email     = var.publisher_email
 
 
   sku_name = "Developer_1"
 
-
-  tags = {
-
-    project = "pharma-capstone"
-
-  }
-
 }
- 

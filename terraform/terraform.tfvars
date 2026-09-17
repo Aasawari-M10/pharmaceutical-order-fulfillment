@@ -37,8 +37,9 @@ application_insights_name = "appi-capstone-pharma"
 
 
 developer_public_ip = "0.0.0.0"
+
 apim_name       = "apim-capstone-pharma-001"
 
-publisher_name  = "Capstone Team"
+publisher_name  = "Pharmaceutical Order Fulfillment Team"
 
-publisher_email = ".com"
+publisher_email = "aasawarirm2004@gmail.com"

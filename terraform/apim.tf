@@ -7,9 +7,9 @@ resource "azurerm_api_management" "apim" {
   resource_group_name = azurerm_resource_group.rg.name
 
 
-  publisher_name  = "Capstone Team"
+  publisher_name  = "Pharmaceutical Order Fulfillment Team"
 
-  publisher_email = "team@example.com"
+  publisher_email = "aasawarirm2004@gmail.com"
 
 
   sku_name = "Developer_1"

@@ -113,3 +113,27 @@ variable "application_insights_name" {
   type        = string 
   default     = "appi-capstone-pharma" 
 } 
+
+# -----------------------
+# Azure Api Management
+# ----------------------
+
+variable "apim_name" {
+
+  type = string
+
+}
+
+
+variable "publisher_name" {
+
+  type = string
+
+}
+
+
+variable "publisher_email" {
+
+  type = string
+
+}

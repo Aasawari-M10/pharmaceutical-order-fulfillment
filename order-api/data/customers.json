@@ -1,0 +1,61 @@
+{
+  "customers": [
+    { "customerId": "HOSP100", "customerName": "Apollo Hospital", "customerType": "Hospital", "isActive": true },
+    { "customerId": "HOSP101", "customerName": "Ruby Hall Clinic", "customerType": "Hospital", "isActive": true },
+    { "customerId": "HOSP102", "customerName": "Fortis Hospital", "customerType": "Hospital", "isActive": true },
+    { "customerId": "HOSP103", "customerName": "Jupiter Hospital", "customerType": "Hospital", "isActive": true },
+    { "customerId": "HOSP104", "customerName": "Sahyadri Hospital", "customerType": "Hospital", "isActive": true },
+    { "customerId": "HOSP105", "customerName": "Manipal Hospital", "customerType": "Hospital", "isActive": true },
+    { "customerId": "HOSP106", "customerName": "KEM Hospital", "customerType": "Hospital", "isActive": true },
+    { "customerId": "HOSP107", "customerName": "AIIMS Delhi", "customerType": "Hospital", "isActive": true },
+    { "customerId": "HOSP108", "customerName": "Max Healthcare", "customerType": "Hospital", "isActive": true },
+    { "customerId": "HOSP109", "customerName": "Narayana Health", "customerType": "Hospital", "isActive": true },
+
+    { "customerId": "HOSP110", "customerName": "Tata Memorial Hospital", "customerType": "Hospital", "isActive": true },
+    { "customerId": "HOSP111", "customerName": "Medanta Hospital", "customerType": "Hospital", "isActive": true },
+    { "customerId": "HOSP112", "customerName": "Care Hospital", "customerType": "Hospital", "isActive": true },
+    { "customerId": "HOSP113", "customerName": "Yashoda Hospital", "customerType": "Hospital", "isActive": true },
+    { "customerId": "HOSP114", "customerName": "Lilavati Hospital", "customerType": "Hospital", "isActive": true },
+    { "customerId": "HOSP115", "customerName": "Holy Family Hospital", "customerType": "Hospital", "isActive": true },
+    { "customerId": "HOSP116", "customerName": "Seven Hills Hospital", "customerType": "Hospital", "isActive": true },
+    { "customerId": "HOSP117", "customerName": "Wockhardt Hospital", "customerType": "Hospital", "isActive": true },
+    { "customerId": "HOSP118", "customerName": "Global Hospital", "customerType": "Hospital", "isActive": true },
+    { "customerId": "HOSP119", "customerName": "Columbia Asia Hospital", "customerType": "Hospital", "isActive": true },
+
+    { "customerId": "HOSP120", "customerName": "HCG Cancer Center", "customerType": "Hospital", "isActive": true },
+    { "customerId": "HOSP121", "customerName": "Aster Hospital", "customerType": "Hospital", "isActive": true },
+    { "customerId": "HOSP122", "customerName": "Sunshine Hospital", "customerType": "Hospital", "isActive": true },
+    { "customerId": "HOSP123", "customerName": "Vijaya Hospital", "customerType": "Hospital", "isActive": true },
+    { "customerId": "HOSP124", "customerName": "Breach Candy Hospital", "customerType": "Hospital", "isActive": true },
+
+    { "customerId": "PHARM100", "customerName": "MedPlus Pharmacy", "customerType": "Pharmacy", "isActive": true },
+    { "customerId": "PHARM101", "customerName": "Apollo Pharmacy", "customerType": "Pharmacy", "isActive": true },
+    { "customerId": "PHARM102", "customerName": "Wellness Forever", "customerType": "Pharmacy", "isActive": true },
+    { "customerId": "PHARM103", "customerName": "Netmeds Store", "customerType": "Pharmacy", "isActive": true },
+    { "customerId": "PHARM104", "customerName": "PharmEasy Partner", "customerType": "Pharmacy", "isActive": true },
+
+    { "customerId": "PHARM105", "customerName": "Guardian Pharmacy", "customerType": "Pharmacy", "isActive": true },
+    { "customerId": "PHARM106", "customerName": "HealthPlus Pharmacy", "customerType": "Pharmacy", "isActive": true },
+    { "customerId": "PHARM107", "customerName": "MediCare Pharmacy", "customerType": "Pharmacy", "isActive": true },
+    { "customerId": "PHARM108", "customerName": "CarePlus Pharmacy", "customerType": "Pharmacy", "isActive": true },
+    { "customerId": "PHARM109", "customerName": "LifeCare Pharmacy", "customerType": "Pharmacy", "isActive": true },
+
+    { "customerId": "PHARM110", "customerName": "QuickMeds Pharmacy", "customerType": "Pharmacy", "isActive": true },
+    { "customerId": "PHARM111", "customerName": "TrustCare Pharmacy", "customerType": "Pharmacy", "isActive": true },
+    { "customerId": "PHARM112", "customerName": "GreenCross Pharmacy", "customerType": "Pharmacy", "isActive": true },
+    { "customerId": "PHARM113", "customerName": "GoodHealth Pharmacy", "customerType": "Pharmacy", "isActive": true },
+    { "customerId": "PHARM114", "customerName": "Central Pharmacy", "customerType": "Pharmacy", "isActive": true },
+
+    { "customerId": "PHARM115", "customerName": "City Pharmacy", "customerType": "Pharmacy", "isActive": true },
+    { "customerId": "PHARM116", "customerName": "TownCare Pharmacy", "customerType": "Pharmacy", "isActive": true },
+    { "customerId": "PHARM117", "customerName": "PrimeMeds Pharmacy", "customerType": "Pharmacy", "isActive": true },
+    { "customerId": "PHARM118", "customerName": "MediPoint Pharmacy", "customerType": "Pharmacy", "isActive": true },
+    { "customerId": "PHARM119", "customerName": "HealthFirst Pharmacy", "customerType": "Pharmacy", "isActive": true },
+
+    { "customerId": "PHARM120", "customerName": "Affordable Meds", "customerType": "Pharmacy", "isActive": true },
+    { "customerId": "PHARM121", "customerName": "SmartCare Pharmacy", "customerType": "Pharmacy", "isActive": true },
+    { "customerId": "PHARM122", "customerName": "BestLife Pharmacy", "customerType": "Pharmacy", "isActive": true },
+    { "customerId": "PHARM123", "customerName": "Reliable Pharmacy", "customerType": "Pharmacy", "isActive": true },
+    { "customerId": "PHARM124", "customerName": "FamilyCare Pharmacy", "customerType": "Pharmacy", "isActive": true }
+  ]
+}

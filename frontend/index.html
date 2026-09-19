@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pharmaceutical Order Fulfillment</title>
+
+    style.css
+</head>
+<body>
+
+    <div class="container">
+
+        <h1>💊 Pharmaceutical Order Fulfillment Platform</h1>
+
+        <!-- CREATE ORDER -->
+        <div class="card">
+            <h2>Create Order</h2>
+
+            <input
+                type="text"
+                id="customerId"
+                placeholder="Customer ID (HOSP100)"
+            >
+
+            <select id="customerType">
+                <option value="Hospital">Hospital</option>
+                <option value="Pharmacy">Pharmacy</option>
+            </select>
+
+            <input
+                type="text"
+                id="medicineId"
+                placeholder="Medicine ID"
+            >
+
+            <input
+                type="number"
+                id="quantity"
+                placeholder="Quantity"
+            >
+
+            <button onclick="createOrder()">
+                Place Order
+            </button>
+
+            <div id="createResult"></div>
+        </div>
+
+        <!-- TRACK ORDER -->
+        <div class="card">
+
+            <h2>Track Order</h2>
+
+            <input
+                type="text"
+                id="orderId"
+                placeholder="Enter Order ID"
+            >
+
+            <button onclick="trackOrder()">
+                Track Order
+            </button>
+
+            <div id="trackResult"></div>
+
+        </div>
+
+        <!-- MEDICINES -->
+        <div class="card">
+
+            <h2>Medicines List</h2>
+
+            <button onclick="getMedicines()">
+                View Medicines
+            </button>
+
+            <div id="medicineList"></div>
+
+        </div>
+
+    </div>
+
+    script.jsscript>
+
+</body>
+</html>

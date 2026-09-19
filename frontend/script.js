@@ -1,4 +1,4 @@
-const API_BASE = "https://apim-capstone-pharma-001.azure-api.net";
+const API_BASE = "https://apim-capstone-pharma-001.azure-api.net/orders";
 
 async function createOrder() {
 
@@ -8,16 +8,16 @@ async function createOrder() {
     const customerType =
         document.getElementById("customerType").value;
 
-    const medicineId =
-        document.getElementById("medicineId").value;
+    const medicineCode =
+        document.getElementById("medicineCode").value;
 
     const quantity =
         parseInt(document.getElementById("quantity").value);
 
     const payload = {
-        customerId,
         customerType,
-        medicineId,
+        customerId,
+        medicineCode,
         quantity
     };
 
@@ -34,18 +34,19 @@ async function createOrder() {
             }
         );
 
-        if (!response.ok) {
-            throw new Error("Failed to create order");
-        }
-
         const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || "Failed to create order");
+        }
 
         document.getElementById("createResult").innerHTML = `
             <div class="success">
                 ✅ Order Created Successfully
                 <br>
-                <strong>Order ID:</strong>
-                ${data.orderId || data.id || "Generated"}
+                <strong>Order ID:</strong> ${data.orderId}
+                <br>
+                <strong>Status:</strong> ${data.status}
             </div>
         `;
 
@@ -55,7 +56,7 @@ async function createOrder() {
 
         document.getElementById("createResult").innerHTML = `
             <div class="error">
-                ❌ Failed to create order
+                ❌ ${error.message}
             </div>
         `;
     }
@@ -77,39 +78,24 @@ async function trackOrder() {
             `${API_BASE}/orders/${orderId}`
         );
 
+        const data = await response.json();
+
         if (!response.ok) {
             throw new Error("Order not found");
         }
 
-        const data = await response.json();
-
         document.getElementById("trackResult").innerHTML = `
             <h3>Order Details</h3>
 
-            <p>
-                <strong>Order ID:</strong>
-                ${data.orderId}
-            </p>
+            <p><strong>Order ID:</strong> ${data.orderId}</p>
 
-            <p>
-                <strong>Customer ID:</strong>
-                ${data.customerId}
-            </p>
+            <p><strong>Customer ID:</strong> ${data.customerId}</p>
 
-            <p>
-                <strong>Medicine ID:</strong>
-                ${data.medicineId}
-            </p>
+            <p><strong>Medicine Code:</strong> ${data.medicineCode}</p>
 
-            <p>
-                <strong>Quantity:</strong>
-                ${data.quantity}
-            </p>
+            <p><strong>Quantity:</strong> ${data.quantity}</p>
 
-            <p>
-                <strong>Status:</strong>
-                ${data.status}
-            </p>
+            <p><strong>Status:</strong> ${data.status}</p>
         `;
 
     } catch (error) {
@@ -132,16 +118,16 @@ async function getMedicines() {
             `${API_BASE}/medicines`
         );
 
+        const medicines = await response.json();
+
         if (!response.ok) {
             throw new Error("Unable to load medicines");
         }
 
-        const medicines = await response.json();
-
         let html = `
             <table>
                 <tr>
-                    <th>Medicine ID</th>
+                    <th>Medicine Code</th>
                     <th>Medicine Name</th>
                     <th>Stock</th>
                 </tr>
@@ -151,7 +137,7 @@ async function getMedicines() {
 
             html += `
                 <tr>
-                    <td>${medicine.medicineId}</td>
+                    <td>${medicine.medicineCode}</td>
                     <td>${medicine.medicineName}</td>
                     <td>${medicine.stock}</td>
                 </tr>

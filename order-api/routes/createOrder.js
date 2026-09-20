@@ -2,56 +2,35 @@ const express = require("express");
 
 const router = express.Router();
 
-
 const { sql, poolPromise } = require("../db");
-
 const { sendOrderMessage } = require("../serviceBus");
 
 
 router.post("/", async (req, res) => {
 
-
     try {
 
-
+        // Frontend sends ONLY these two fields
         const {
-
-            customerType,
-
-            customerId,
-
             medicineCode,
-
             quantity
-
         } = req.body;
 
 
-        // Generate Order ID automatically
+        // Get logged-in user's Entra Object ID from JWT
+        const entraObjectId = req.user.oid;
 
-        const orderId = `ORD-${Date.now()}`;
 
-
-        // Validation
-
+        // Validate request
         if (
-
-            !customerType ||
-
-            !customerId ||
-
+            !entraObjectId ||
             !medicineCode ||
-
             !quantity ||
-
             quantity <= 0
-
         ) {
 
             return res.status(400).json({
-
                 message: "Invalid Order Request"
-
             });
 
         }
@@ -60,61 +39,107 @@ router.post("/", async (req, res) => {
         const pool = await poolPromise;
 
 
-        await pool.request()
+        // Find the customer associated with this Entra user
+        const customerResult = await pool.request()
 
-            .input("OrderId", sql.VarChar, orderId)
-
-            .input("CustomerType", sql.VarChar, customerType)
-
-            .input("CustomerId", sql.VarChar, customerId)
-
-            .input("MedicineCode", sql.VarChar, medicineCode)
-
-            .input("Quantity", sql.Int, quantity)
-
-            .input("Status", sql.VarChar, "PENDING")
+            .input(
+                "EntraObjectId",
+                sql.VarChar,
+                entraObjectId
+            )
 
             .query(`
-
-                INSERT INTO MedicineOrders
-
-                (
-
-                    OrderId,
-
-                    CustomerType,
-
+                SELECT
                     CustomerId,
-
-                    MedicineCode,
-
-                    Quantity,
-
-                    Status
-
-                )
-
-                VALUES
-
-                (
-
-                    @OrderId,
-
-                    @CustomerType,
-
-                    @CustomerId,
-
-                    @MedicineCode,
-
-                    @Quantity,
-
-                    @Status
-
-                )
-
+                    CustomerType
+                FROM CustomerUsersF
+                WHERE EntraObjectId = @EntraObjectId
             `);
 
 
+        // User is authenticated but not registered
+        if (customerResult.recordset.length === 0) {
+
+            return res.status(403).json({
+                message: "User is not registered with a customer organization"
+            });
+
+        }
+
+
+        // Get customer information
+        const customer = customerResult.recordset[0];
+
+        const customerId = customer.CustomerId;
+        const customerType = customer.CustomerType;
+
+
+        // Generate Order ID
+        const orderId = `ORD-${Date.now()}`;
+
+
+        // Insert order into database
+        await pool.request()
+
+            .input(
+                "OrderId",
+                sql.VarChar,
+                orderId
+            )
+
+            .input(
+                "CustomerType",
+                sql.VarChar,
+                customerType
+            )
+
+            .input(
+                "CustomerId",
+                sql.VarChar,
+                customerId
+            )
+
+            .input(
+                "MedicineCode",
+                sql.VarChar,
+                medicineCode
+            )
+
+            .input(
+                "Quantity",
+                sql.Int,
+                quantity
+            )
+
+            .input(
+                "Status",
+                sql.VarChar,
+                "PENDING"
+            )
+
+            .query(`
+                INSERT INTO MedicineOrders
+                (
+                    OrderId,
+                    CustomerType,
+                    CustomerId,
+                    MedicineCode,
+                    Quantity,
+                    Status
+                )
+                VALUES
+                (
+                    @OrderId,
+                    @CustomerType,
+                    @CustomerId,
+                    @MedicineCode,
+                    @Quantity,
+                    @Status
+                )
+            `);
+
+
+        // Send message to Service Bus
         const orderMessage = {
 
             orderId,
@@ -135,6 +160,7 @@ router.post("/", async (req, res) => {
         await sendOrderMessage(orderMessage);
 
 
+        // Response
         res.status(201).json({
 
             message: "Order Created",
@@ -150,14 +176,10 @@ router.post("/", async (req, res) => {
 
     } catch (error) {
 
-
         console.error("Create Order Error:", error);
 
-
         res.status(500).json({
-
             error: "Internal Server Error"
-
         });
 
     }

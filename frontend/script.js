@@ -107,7 +107,7 @@ const loginRequest = {
 ```
 scopes: [
 
-    "YOUR_API_SCOPE"
+    "api://bdee7642-ca76-4f25-bf6b-0fe9006f58bd"
 
 ]
 ```

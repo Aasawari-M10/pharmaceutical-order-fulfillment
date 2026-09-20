@@ -536,6 +536,32 @@ async function getMedicines() {
     }
 }
 
+
+
+
+//testing
+
+
+async function debugToken() {
+    try {
+        const token = await getAccessToken();
+
+        const payload = JSON.parse(
+            atob(
+                token
+                    .split(".")[1]
+                    .replace(/-/g, "+")
+                    .replace(/_/g, "/")
+            )
+        );
+
+        console.log("JWT CLAIMS:");
+        console.log(payload);
+    } catch (error) {
+        console.error("Token debug failed:", error);
+    }
+}
+
 /* ============================================================
    12. START APPLICATION
    ============================================================ */

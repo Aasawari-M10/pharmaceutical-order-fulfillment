@@ -358,89 +358,92 @@ async function createOrder() {
    ============================================================ */
 
 async function trackOrder() {
+
     const orderId =
-        document.getElementById(
-            "orderId"
-        ).value.trim();
+        document.getElementById("orderId").value.trim();
 
     if (!orderId) {
-        alert(
-            "Please enter Order ID."
-        );
+        alert("Please enter Order ID.");
         return;
     }
 
     try {
-        const accessToken =
-            await getAccessToken();
 
-        const response =
-            await fetch(
-                `${API_BASE}/orders/${orderId}`,
-                {
-                    method: "GET",
+        const accessToken = await getAccessToken();
 
-                    headers: {
-                        "Authorization":
-                            `Bearer ${accessToken}`
-                    }
+        const response = await fetch(
+            `${API_BASE}/orders/${orderId}`,
+            {
+                method: "GET",
+
+                headers: {
+                    "Authorization": `Bearer ${accessToken}`
                 }
-            );
+            }
+        );
 
-        const data =
-            await response.json();
+        const data = await response.json();
+
+        console.log("TRACK ORDER RESPONSE:", data);
 
         if (!response.ok) {
             throw new Error(
-                "Order not found."
+                data.message || "Order not found."
             );
         }
 
-        document.getElementById(
-            "trackResult"
-        ).innerHTML = `
+        document.getElementById("trackResult").innerHTML = `
             <div class="success">
-                <strong>
-                    Order Details
-                </strong>
+
+                <strong>Order Details</strong>
+
                 <br><br>
 
                 <strong>Order ID:</strong>
-                ${data.orderId}
+                ${data.OrderId}
 
                 <br>
 
                 <strong>Customer ID:</strong>
-                ${data.customerId}
+                ${data.CustomerId}
+
+                <br>
+
+                <strong>Customer Type:</strong>
+                ${data.CustomerType}
 
                 <br>
 
                 <strong>Medicine:</strong>
-                ${data.medicineCode}
+                ${data.MedicineCode}
 
                 <br>
 
                 <strong>Quantity:</strong>
-                ${data.quantity}
+                ${data.Quantity}
 
                 <br>
 
                 <strong>Status:</strong>
-                ${data.status}
+                ${data.Status}
+
             </div>
         `;
-    } catch (error) {
-        console.error(error);
 
-        document.getElementById(
-            "trackResult"
-        ).innerHTML = `
+    } catch (error) {
+
+        console.error("Track Order Error:", error);
+
+        document.getElementById("trackResult").innerHTML = `
             <div class="error">
-                ❌ Unable to track order.
+                ❌ ${error.message}
             </div>
         `;
     }
 }
+
+    
+         
 
 /* ============================================================
    11. GET MEDICINES

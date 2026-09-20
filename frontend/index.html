@@ -1,104 +1,519 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+```
+<meta charset="UTF-8">
 
-    <title>Pharmaceutical Order Fulfillment</title>
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
-    <!-- Load CSS -->
-    <link rel="stylesheet" href="style.css">
+<title>PharmaFlow | Order Fulfillment</title>
+
+<link
+    rel="preconnect"
+    href="https://fonts.googleapis.com"
+>
+
+<link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+>
+
+<link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap"
+    rel="stylesheet"
+>
+
+<link
+    rel="stylesheet"
+    href="style.css"
+>
+```
+
 </head>
 
 <body>
 
-    <div class="container">
+```
+<!-- Background decoration -->
 
-        <h1>💊 Pharmaceutical Order Fulfillment Platform</h1>
+<div class="background-shape shape-one"></div>
+<div class="background-shape shape-two"></div>
 
-        <!-- CREATE ORDER -->
-        <div class="card">
 
-            <h2>Create Order</h2>
+<div class="app">
 
-            <label for="customerId">Customer ID</label>
-            <input
-                type="text"
-                id="customerId"
-                placeholder="Customer ID, for example HOSP100"
-            >
 
-            <label for="customerType">Customer Type</label>
-            <select id="customerType">
-                <option value="Hospital">Hospital</option>
-                <option value="Pharmacy">Pharmacy</option>
-            </select>
+    <!-- ================= HEADER ================= -->
 
-            <label for="medicineCode">Medicine Code</label>
-            <input
-                type="text"
-                id="medicineCode"
-                placeholder="Medicine Code, for example MED001"
-            >
+    <header class="topbar">
 
-            <label for="quantity">Quantity</label>
-            <input
-                type="number"
-                id="quantity"
-                min="1"
-                placeholder="Quantity"
-            >
+        <div class="brand">
 
-            <button type="button" onclick="createOrder()">
-                Place Order
-            </button>
+            <div class="brand-icon">
+                💊
+            </div>
 
-            <div id="createResult"></div>
+            <div>
+
+                <h1>PharmaFlow</h1>
+
+                <p>
+                    Pharmaceutical Order Fulfillment
+                </p>
+
+            </div>
 
         </div>
 
-        <!-- TRACK ORDER -->
-        <div class="card">
 
-            <h2>Track Order</h2>
+        <div class="header-actions">
 
-            <label for="orderId">Order ID</label>
-            <input
-                type="text"
-                id="orderId"
-                placeholder="Enter Order ID"
+            <div
+                id="loggedUser"
+                class="logged-user"
+                style="display: none;"
             >
 
-            <button type="button" onclick="trackOrder()">
-                Track Order
+                <div class="user-avatar">
+                    👤
+                </div>
+
+                <div>
+
+                    <span id="userName">
+                        User
+                    </span>
+
+                    <small>
+                        Authenticated User
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <button
+                id="loginButton"
+                class="btn btn-primary"
+                onclick="login()"
+            >
+                Login
             </button>
 
-            <div id="trackResult"></div>
+
+            <button
+                id="logoutButton"
+                class="btn btn-outline"
+                onclick="logout()"
+                style="display: none;"
+            >
+                Logout
+            </button>
 
         </div>
 
-        <!-- MEDICINES -->
-        <div class="card">
+    </header>
 
-            <h2>Medicines List</h2>
 
-            <button type="button" onclick="getMedicines()">
-                View Medicines
-            </button>
+    <!-- ================= HERO ================= -->
+
+    <section class="hero">
+
+        <div class="hero-content">
+
+            <div class="hero-badge">
+                <span class="status-dot"></span>
+                Secure B2B Pharmaceutical Platform
+            </div>
+
+            <h2>
+                Manage pharmaceutical orders
+                <span>securely and efficiently.</span>
+            </h2>
+
+            <p>
+                A secure digital platform for hospitals and
+                pharmacies to place, track, and manage
+                pharmaceutical orders.
+            </p>
+
+        </div>
+
+
+        <div class="hero-visual">
+
+            <div class="floating-card card-main">
+
+                <div class="medicine-icon">
+                    💊
+                </div>
+
+                <div>
+
+                    <strong>
+                        Order Processing
+                    </strong>
+
+                    <span>
+                        Secure &amp; Reliable
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="floating-card card-small">
+
+                <span class="check-icon">
+                    ✓
+                </span>
+
+                <div>
+
+                    <strong>
+                        Protected
+                    </strong>
+
+                    <span>
+                        JWT Authentication
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= LOGIN MESSAGE ================= -->
+
+    <section
+        id="loginMessage"
+        class="login-panel"
+    >
+
+        <div class="login-icon">
+            🔐
+        </div>
+
+        <div>
+
+            <h3>
+                Welcome to PharmaFlow
+            </h3>
+
+            <p>
+                Please sign in to access your organization's
+                pharmaceutical ordering dashboard.
+            </p>
+
+        </div>
+
+        <button
+            class="btn btn-primary login-large"
+            onclick="login()"
+        >
+            Sign in securely
+            <span>→</span>
+        </button>
+
+    </section>
+
+
+    <!-- ================= USER DASHBOARD ================= -->
+
+    <main
+        id="applicationContent"
+        style="display: none;"
+    >
+
+
+        <!-- CUSTOMER INFORMATION -->
+
+        <section class="customer-banner">
+
+            <div class="customer-left">
+
+                <div class="customer-icon">
+                    🏥
+                </div>
+
+                <div>
+
+                    <span class="section-label">
+                        AUTHENTICATED CUSTOMER
+                    </span>
+
+                    <h3 id="customerName">
+                        Customer
+                    </h3>
+
+                    <p>
+                        Customer ID:
+                        <strong id="customerId">
+                            Loading...
+                        </strong>
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="secure-badge">
+
+                <span>✓</span>
+
+                Identity Verified
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= DASHBOARD GRID ================= -->
+
+        <div class="dashboard-grid">
+
+
+            <!-- CREATE ORDER -->
+
+            <section class="card order-card">
+
+                <div class="card-heading">
+
+                    <div>
+
+                        <span class="card-label">
+                            ORDER MANAGEMENT
+                        </span>
+
+                        <h2>
+                            Create New Order
+                        </h2>
+
+                        <p>
+                            Submit a pharmaceutical order
+                            for your organization.
+                        </p>
+
+                    </div>
+
+                    <div class="card-icon blue">
+                        📦
+                    </div>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="medicineCode">
+                        Medicine Code
+                    </label>
+
+                    <input
+                        type="text"
+                        id="medicineCode"
+                        placeholder="Example: MED001"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="quantity">
+                        Quantity
+                    </label>
+
+                    <input
+                        type="number"
+                        id="quantity"
+                        min="1"
+                        placeholder="Enter quantity"
+                    >
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="btn btn-primary full-button"
+                    onclick="createOrder()"
+                >
+
+                    Place Order
+
+                    <span>→</span>
+
+                </button>
+
+
+                <div id="createResult"></div>
+
+            </section>
+
+
+            <!-- TRACK ORDER -->
+
+            <section class="card">
+
+                <div class="card-heading">
+
+                    <div>
+
+                        <span class="card-label">
+                            ORDER TRACKING
+                        </span>
+
+                        <h2>
+                            Track Order
+                        </h2>
+
+                        <p>
+                            Check the latest status of
+                            an existing order.
+                        </p>
+
+                    </div>
+
+                    <div class="card-icon purple">
+                        🔎
+                    </div>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="orderId">
+                        Order ID
+                    </label>
+
+                    <input
+                        type="text"
+                        id="orderId"
+                        placeholder="Example: ORD10025"
+                    >
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="btn btn-secondary full-button"
+                    onclick="trackOrder()"
+                >
+
+                    Track Order
+
+                    <span>→</span>
+
+                </button>
+
+
+                <div id="trackResult"></div>
+
+            </section>
+
+
+        </div>
+
+
+        <!-- ================= MEDICINES ================= -->
+
+        <section class="card medicine-card">
+
+            <div class="medicine-header">
+
+                <div>
+
+                    <span class="card-label">
+                        INVENTORY
+                    </span>
+
+                    <h2>
+                        Available Medicines
+                    </h2>
+
+                    <p>
+                        View medicines currently available
+                        in the platform.
+                    </p>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    onclick="getMedicines()"
+                >
+                    View Medicines
+                    <span>→</span>
+                </button>
+
+            </div>
+
 
             <div id="medicineList"></div>
 
+        </section>
+
+
+    </main>
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer>
+
+        <div>
+
+            <strong>
+                💊 PharmaFlow
+            </strong>
+
+            <span>
+                Secure Pharmaceutical Order Fulfillment
+            </span>
+
         </div>
 
-    </div>
 
-    <!-- Load JavaScript -->
-    <script src="script.js"></script>
+        <div class="footer-security">
+
+            🔒 Identity protected by
+            Microsoft Entra External ID
+
+        </div>
+
+    </footer>
+
+</div>
+
+
+<!-- MSAL Browser -->
+
+<script
+    src="https://alcdn.msauth.net/browser/2.38.3/js/msal-browser.min.js">
+</script>
+
+
+<script src="script.js"></script>
+```
 
 </body>
 

@@ -1,49 +1,22 @@
 /*
-
-* ============================================================
-* PHARMAFLOW FRONTEND
-* Microsoft Entra External ID + JWT
-* ============================================================
-  */
+ * ============================================================
+ * PHARMAFLOW FRONTEND
+ * Microsoft Entra External ID + JWT
+ * ============================================================
+ */
 
 /* ============================================================
-
-1. CONFIGURATION
+   1. CONFIGURATION
    ============================================================ */
 
-/*
-
-* APIM base URL.
-*
-* IMPORTANT:
-* Do NOT include /orders here.
-*
-* We will build:
-*
-* POST  /orders
-* GET   /orders/{orderId}
-* GET   /medicines
-*
-
-*/
-
 const API_BASE =
-"https://apim-capstone-pharma-001.azure-api.net/orders";
-
-/*
-
-* Microsoft Entra External ID configuration.
-*
-* These values will be filled after your
-* External ID application configuration is complete.
-*
-
-*/
+    "https://apim-capstone-pharma-001.azure-api.net/orders";
 
 const msalConfig = {
     auth: {
         clientId: "9b0384a4-878b-4d9b-b8db-9e4f28622b2c",
-        authority: "https://pharmaordercustomers2026.ciamlogin.com/bc709ab2-033c-47ac-8af2-baa9ae6e645a",
+        authority:
+            "https://pharmaordercustomers2026.ciamlogin.com/bc709ab2-033c-47ac-8af2-baa9ae6e645a",
         redirectUri: window.location.origin
     },
 
@@ -52,779 +25,516 @@ const msalConfig = {
         storeAuthStateInCookie: false
     }
 };
-/*
-
-* API scope.
-*
-* This will be created when we configure
-* the protected API application in Entra.
-*
-* Example:
-*
-* api://YOUR_API_CLIENT_ID/access_as_user
-*
-
-*/
 
 const loginRequest = {
-
-```
-scopes: [
-
-    "api://bdee7642-ca76-4f25-bf6b-0fe9006f58bd/access_as_user"
-
-]
-```
-
+    scopes: [
+        "api://bdee7642-ca76-4f25-bf6b-0fe9006f58bd/access_as_user"
+    ]
 };
 
 /* ============================================================
-2. INITIALIZE MSAL
-============================================================ */
+   2. INITIALIZE MSAL
+   ============================================================ */
 
 let msalInstance = null;
-
 let currentAccount = null;
 
-/*
-
-* Initialize the MSAL browser client.
-  */
-
 function initializeAuthentication() {
+    try {
+        msalInstance =
+            new msal.PublicClientApplication(msalConfig);
 
-```
-try {
-
-    msalInstance =
-        new msal.PublicClientApplication(msalConfig);
-
-    handleAuthenticationResult();
-
-}
-
-catch (error) {
-
-    console.error(
-        "MSAL initialization failed:",
-        error
-    );
-
-}
-```
-
+        handleAuthenticationResult();
+    } catch (error) {
+        console.error(
+            "MSAL initialization failed:",
+            error
+        );
+    }
 }
 
 /* ============================================================
-3. HANDLE LOGIN RESPONSE
-============================================================ */
+   3. HANDLE LOGIN RESPONSE
+   ============================================================ */
 
 async function handleAuthenticationResult() {
+    try {
+        const response =
+            await msalInstance.handleRedirectPromise();
 
-```
-try {
+        if (response) {
+            currentAccount = response.account;
+            updateUserInterface();
+            return;
+        }
 
-    const response =
-        await msalInstance.handleRedirectPromise();
+        const accounts =
+            msalInstance.getAllAccounts();
 
-
-    if (response) {
-
-        currentAccount =
-            response.account;
-
-        updateUserInterface();
-
-        return;
-
+        if (accounts.length > 0) {
+            currentAccount = accounts[0];
+            updateUserInterface();
+        }
+    } catch (error) {
+        console.error(
+            "Authentication response error:",
+            error
+        );
     }
-
-
-    const accounts =
-        msalInstance.getAllAccounts();
-
-
-    if (accounts.length > 0) {
-
-        currentAccount =
-            accounts[0];
-
-        updateUserInterface();
-
-    }
-
-}
-
-catch (error) {
-
-    console.error(
-        "Authentication response error:",
-        error
-    );
-
-}
-```
-
 }
 
 /* ============================================================
-4. LOGIN
-============================================================ */
+   4. LOGIN
+   ============================================================ */
 
 async function login() {
+    try {
+        await msalInstance.loginRedirect(
+            loginRequest
+        );
+    } catch (error) {
+        console.error(
+            "Login failed:",
+            error
+        );
 
-```
-try {
-
-    await msalInstance.loginRedirect(
-        loginRequest
-    );
-
-}
-
-catch (error) {
-
-    console.error(
-        "Login failed:",
-        error
-    );
-
-    alert(
-        "Login failed. Please try again."
-    );
-
-}
-```
-
+        alert(
+            "Login failed. Please try again."
+        );
+    }
 }
 
 /* ============================================================
-5. LOGOUT
-============================================================ */
+   5. LOGOUT
+   ============================================================ */
 
 function logout() {
-
-```
-msalInstance.logoutRedirect();
-```
-
+    msalInstance.logoutRedirect();
 }
 
 /* ============================================================
-6. UPDATE UI AFTER LOGIN
-============================================================ */
+   6. UPDATE UI AFTER LOGIN
+   ============================================================ */
 
 function updateUserInterface() {
+    const loginButton =
+        document.getElementById("loginButton");
 
-```
-const loginButton =
-    document.getElementById("loginButton");
+    const logoutButton =
+        document.getElementById("logoutButton");
 
-const logoutButton =
-    document.getElementById("logoutButton");
+    const loggedUser =
+        document.getElementById("loggedUser");
 
-const loggedUser =
-    document.getElementById("loggedUser");
+    const loginMessage =
+        document.getElementById("loginMessage");
 
-const loginMessage =
-    document.getElementById("loginMessage");
+    const applicationContent =
+        document.getElementById(
+            "applicationContent"
+        );
 
-const applicationContent =
-    document.getElementById(
-        "applicationContent"
-    );
+    const userName =
+        document.getElementById("userName");
 
-const userName =
-    document.getElementById("userName");
+    if (currentAccount) {
+        if (loginButton) {
+            loginButton.style.display = "none";
+        }
 
+        if (logoutButton) {
+            logoutButton.style.display = "inline-block";
+        }
 
-if (currentAccount) {
+        if (loggedUser) {
+            loggedUser.style.display = "flex";
+        }
 
-    loginButton.style.display =
-        "none";
+        if (loginMessage) {
+            loginMessage.style.display = "none";
+        }
 
-    logoutButton.style.display =
-        "inline-block";
+        if (applicationContent) {
+            applicationContent.style.display = "block";
+        }
 
-    loggedUser.style.display =
-        "flex";
+        if (userName) {
+            userName.textContent =
+                currentAccount.name ||
+                currentAccount.username ||
+                "Authenticated User";
+        }
 
-    loginMessage.style.display =
-        "none";
+        loadCustomerInformation();
+    } else {
+        if (loginButton) {
+            loginButton.style.display = "inline-block";
+        }
 
-    applicationContent.style.display =
-        "block";
+        if (logoutButton) {
+            logoutButton.style.display = "none";
+        }
 
+        if (loggedUser) {
+            loggedUser.style.display = "none";
+        }
 
-    userName.textContent =
-        currentAccount.name ||
-        currentAccount.username ||
-        "Authenticated User";
+        if (loginMessage) {
+            loginMessage.style.display = "flex";
+        }
 
-
-    /*
-     * At this stage we only display
-     * the authenticated identity.
-     *
-     * Customer ID will later be obtained
-     * from the backend/customer mapping.
-     */
-
-    loadCustomerInformation();
-
-}
-
-else {
-
-    loginButton.style.display =
-        "inline-block";
-
-    logoutButton.style.display =
-        "none";
-
-    loggedUser.style.display =
-        "none";
-
-    loginMessage.style.display =
-        "flex";
-
-    applicationContent.style.display =
-        "none";
-
-}
-```
-
+        if (applicationContent) {
+            applicationContent.style.display = "none";
+        }
+    }
 }
 
 /* ============================================================
-7. GET ACCESS TOKEN
-============================================================ */
+   7. GET ACCESS TOKEN
+   ============================================================ */
 
 async function getAccessToken() {
+    if (!currentAccount) {
+        throw new Error(
+            "User is not logged in."
+        );
+    }
 
-```
-if (!currentAccount) {
+    try {
+        const response =
+            await msalInstance.acquireTokenSilent({
+                ...loginRequest,
+                account: currentAccount
+            });
 
-    throw new Error(
-        "User is not logged in."
-    );
+        return response.accessToken;
+    } catch (error) {
+        console.error(
+            "Silent token acquisition failed:",
+            error
+        );
 
-}
-
-
-try {
-
-    const response =
-        await msalInstance.acquireTokenSilent({
-
-            ...loginRequest,
-
-            account:
-                currentAccount
-
-        });
-
-
-    return response.accessToken;
-
-}
-
-catch (error) {
-
-    console.error(
-        "Silent token acquisition failed:",
-        error
-    );
-
-
-    /*
-     * If silent acquisition fails,
-     * ask the user to authenticate again.
-     */
-
-    await msalInstance.acquireTokenRedirect(
-        loginRequest
-    );
-
-}
-```
-
+        await msalInstance.acquireTokenRedirect(
+            loginRequest
+        );
+    }
 }
 
 /* ============================================================
-8. CUSTOMER INFORMATION
-============================================================ */
+   8. CUSTOMER INFORMATION
+   ============================================================ */
 
 async function loadCustomerInformation() {
+    const customerName =
+        document.getElementById(
+            "customerName"
+        );
 
-```
-/*
- * IMPORTANT:
- *
- * We will connect this to your
- * Order API/customer endpoint later.
- *
- * The backend will determine:
- *
- * JWT identity
- *       ↓
- * CustomerUsers
- *       ↓
- * HOSP100
- *
- * We should NOT trust a customer ID
- * entered by the browser.
- */
+    const customerId =
+        document.getElementById(
+            "customerId"
+        );
 
+    if (customerName) {
+        customerName.textContent =
+            "Authenticated Organization";
+    }
 
-const customerName =
-    document.getElementById(
-        "customerName"
-    );
-
-const customerId =
-    document.getElementById(
-        "customerId"
-    );
-
-
-customerName.textContent =
-    "Authenticated Organization";
-
-customerId.textContent =
-    "Resolved by platform";
-```
-
+    if (customerId) {
+        customerId.textContent =
+            "Resolved by platform";
+    }
 }
 
 /* ============================================================
-9. CREATE ORDER
-============================================================ */
+   9. CREATE ORDER
+   ============================================================ */
 
 async function createOrder() {
-
-```
-const medicineCode =
-    document.getElementById(
-        "medicineCode"
-    ).value.trim();
-
-
-const quantity =
-    parseInt(
+    const medicineCode =
         document.getElementById(
-            "quantity"
-        ).value
-    );
+            "medicineCode"
+        ).value.trim();
 
-
-if (!medicineCode) {
-
-    alert(
-        "Please enter a medicine code."
-    );
-
-    return;
-
-}
-
-
-if (!quantity || quantity <= 0) {
-
-    alert(
-        "Please enter a valid quantity."
-    );
-
-    return;
-
-}
-
-
-try {
-
-    const accessToken =
-        await getAccessToken();
-
-
-    const payload = {
-
-        medicineCode:
-            medicineCode,
-
-        quantity:
-            quantity
-
-    };
-
-
-    const response =
-        await fetch(
-
-            `${API_BASE}/orders`,
-
-            {
-
-                method: "POST",
-
-                headers: {
-
-                    "Content-Type":
-                        "application/json",
-
-                    "Authorization":
-                        `Bearer ${accessToken}`
-
-                },
-
-                body:
-                    JSON.stringify(payload)
-
-            }
-
+    const quantity =
+        parseInt(
+            document.getElementById(
+                "quantity"
+            ).value
         );
 
-
-    const data =
-        await response.json();
-
-
-    if (!response.ok) {
-
-        throw new Error(
-
-            data.message ||
-            "Failed to create order"
-
+    if (!medicineCode) {
+        alert(
+            "Please enter a medicine code."
         );
-
+        return;
     }
 
+    if (!quantity || quantity <= 0) {
+        alert(
+            "Please enter a valid quantity."
+        );
+        return;
+    }
 
-    document.getElementById(
-        "createResult"
-    ).innerHTML = `
+    try {
+        const accessToken =
+            await getAccessToken();
 
-        <div class="success">
+        const payload = {
+            medicineCode: medicineCode,
+            quantity: quantity
+        };
 
-            <strong>
-                ✅ Order Created Successfully
-            </strong>
+        const response =
+            await fetch(
+                `${API_BASE}/orders`,
+                {
+                    method: "POST",
 
-            <br>
+                    headers: {
+                        "Content-Type":
+                            "application/json",
 
-            Order ID:
-            <strong>
-                ${data.orderId}
-            </strong>
+                        "Authorization":
+                            `Bearer ${accessToken}`
+                    },
 
-            <br>
+                    body:
+                        JSON.stringify(payload)
+                }
+            );
 
-            Status:
-            <strong>
-                ${data.status}
-            </strong>
+        const data =
+            await response.json();
 
-        </div>
+        if (!response.ok) {
+            throw new Error(
+                data.message ||
+                "Failed to create order"
+            );
+        }
 
-    `;
+        document.getElementById(
+            "createResult"
+        ).innerHTML = `
+            <div class="success">
+                <strong>
+                    ✅ Order Created Successfully
+                </strong>
+                <br>
+                Order ID:
+                <strong>
+                    ${data.orderId}
+                </strong>
+                <br>
+                Status:
+                <strong>
+                    ${data.status}
+                </strong>
+            </div>
+        `;
+    } catch (error) {
+        console.error(error);
 
-}
-
-catch (error) {
-
-    console.error(error);
-
-
-    document.getElementById(
-        "createResult"
-    ).innerHTML = `
-
-        <div class="error">
-
-            ❌ ${error.message}
-
-        </div>
-
-    `;
-
-}
-```
-
+        document.getElementById(
+            "createResult"
+        ).innerHTML = `
+            <div class="error">
+                ❌ ${error.message}
+            </div>
+        `;
+    }
 }
 
 /* ============================================================
-10. TRACK ORDER
-============================================================ */
+   10. TRACK ORDER
+   ============================================================ */
 
 async function trackOrder() {
+    const orderId =
+        document.getElementById(
+            "orderId"
+        ).value.trim();
 
-```
-const orderId =
-    document.getElementById(
-        "orderId"
-    ).value.trim();
-
-
-if (!orderId) {
-
-    alert(
-        "Please enter Order ID."
-    );
-
-    return;
-
-}
-
-
-try {
-
-    const accessToken =
-        await getAccessToken();
-
-
-    const response =
-        await fetch(
-
-            `${API_BASE}/orders/${orderId}`,
-
-            {
-
-                method: "GET",
-
-                headers: {
-
-                    "Authorization":
-                        `Bearer ${accessToken}`
-
-                }
-
-            }
-
+    if (!orderId) {
+        alert(
+            "Please enter Order ID."
         );
-
-
-    const data =
-        await response.json();
-
-
-    if (!response.ok) {
-
-        throw new Error(
-            "Order not found."
-        );
-
+        return;
     }
 
+    try {
+        const accessToken =
+            await getAccessToken();
 
-    document.getElementById(
-        "trackResult"
-    ).innerHTML = `
+        const response =
+            await fetch(
+                `${API_BASE}/orders/${orderId}`,
+                {
+                    method: "GET",
 
-        <div class="success">
+                    headers: {
+                        "Authorization":
+                            `Bearer ${accessToken}`
+                    }
+                }
+            );
 
-            <strong>
-                Order Details
-            </strong>
+        const data =
+            await response.json();
 
-            <br><br>
+        if (!response.ok) {
+            throw new Error(
+                "Order not found."
+            );
+        }
 
-            <strong>Order ID:</strong>
-            ${data.orderId}
+        document.getElementById(
+            "trackResult"
+        ).innerHTML = `
+            <div class="success">
+                <strong>
+                    Order Details
+                </strong>
+                <br><br>
 
-            <br>
+                <strong>Order ID:</strong>
+                ${data.orderId}
 
-            <strong>Customer ID:</strong>
-            ${data.customerId}
+                <br>
 
-            <br>
+                <strong>Customer ID:</strong>
+                ${data.customerId}
 
-            <strong>Medicine:</strong>
-            ${data.medicineCode}
+                <br>
 
-            <br>
+                <strong>Medicine:</strong>
+                ${data.medicineCode}
 
-            <strong>Quantity:</strong>
-            ${data.quantity}
+                <br>
 
-            <br>
+                <strong>Quantity:</strong>
+                ${data.quantity}
 
-            <strong>Status:</strong>
-            ${data.status}
+                <br>
 
-        </div>
+                <strong>Status:</strong>
+                ${data.status}
+            </div>
+        `;
+    } catch (error) {
+        console.error(error);
 
-    `;
-
-}
-
-catch (error) {
-
-    console.error(error);
-
-
-    document.getElementById(
-        "trackResult"
-    ).innerHTML = `
-
-        <div class="error">
-
-            ❌ Unable to track order.
-
-        </div>
-
-    `;
-
-}
-```
-
+        document.getElementById(
+            "trackResult"
+        ).innerHTML = `
+            <div class="error">
+                ❌ Unable to track order.
+            </div>
+        `;
+    }
 }
 
 /* ============================================================
-11. GET MEDICINES
-============================================================ */
+   11. GET MEDICINES
+   ============================================================ */
 
 async function getMedicines() {
+    try {
+        const accessToken =
+            await getAccessToken();
 
-```
-try {
+        const response =
+            await fetch(
+                `${API_BASE}/medicines`,
+                {
+                    method: "GET",
 
-    const accessToken =
-        await getAccessToken();
-
-
-    const response =
-        await fetch(
-
-            `${API_BASE}/medicines`,
-
-            {
-
-                method: "GET",
-
-                headers: {
-
-                    "Authorization":
-                        `Bearer ${accessToken}`
-
+                    headers: {
+                        "Authorization":
+                            `Bearer ${accessToken}`
+                    }
                 }
+            );
 
-            }
+        const medicines =
+            await response.json();
 
-        );
-
-
-    const medicines =
-        await response.json();
-
-
-    if (!response.ok) {
-
-        throw new Error(
-            "Unable to load medicines."
-        );
-
-    }
-
-
-    let html = `
-
-        <table>
-
-            <thead>
-
-                <tr>
-
-                    <th>
-                        Medicine Code
-                    </th>
-
-                    <th>
-                        Medicine Name
-                    </th>
-
-                    <th>
-                        Stock
-                    </th>
-
-                </tr>
-
-            </thead>
-
-            <tbody>
-
-    `;
-
-
-    medicines.forEach(
-        (medicine) => {
-
-            html += `
-
-                <tr>
-
-                    <td>
-                        ${medicine.medicineCode}
-                    </td>
-
-                    <td>
-                        ${medicine.medicineName}
-                    </td>
-
-                    <td>
-                        ${medicine.stock}
-                    </td>
-
-                </tr>
-
-            `;
-
+        if (!response.ok) {
+            throw new Error(
+                "Unable to load medicines."
+            );
         }
-    );
 
+        let html = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>
+                            Medicine Code
+                        </th>
 
-    html += `
+                        <th>
+                            Medicine Name
+                        </th>
 
-            </tbody>
+                        <th>
+                            Stock
+                        </th>
+                    </tr>
+                </thead>
 
-        </table>
+                <tbody>
+        `;
 
-    `;
+        medicines.forEach(
+            (medicine) => {
+                html += `
+                    <tr>
+                        <td>
+                            ${medicine.medicineCode}
+                        </td>
 
+                        <td>
+                            ${medicine.medicineName}
+                        </td>
 
-    document.getElementById(
-        "medicineList"
-    ).innerHTML =
-        html;
+                        <td>
+                            ${medicine.stock}
+                        </td>
+                    </tr>
+                `;
+            }
+        );
 
-}
+        html += `
+                </tbody>
+            </table>
+        `;
 
-catch (error) {
+        document.getElementById(
+            "medicineList"
+        ).innerHTML = html;
 
-    console.error(error);
+    } catch (error) {
+        console.error(error);
 
-
-    document.getElementById(
-        "medicineList"
-    ).innerHTML = `
-
-        <div class="error">
-
-            ❌ Failed to load medicines.
-
-        </div>
-
-    `;
-
-}
-```
-
+        document.getElementById(
+            "medicineList"
+        ).innerHTML = `
+            <div class="error">
+                ❌ Failed to load medicines.
+            </div>
+        `;
+    }
 }
 
 /* ============================================================
-12. START APPLICATION
-============================================================ */
+   12. START APPLICATION
+   ============================================================ */
 
 window.addEventListener(
-"DOMContentLoaded",
-initializeAuthentication
+    "DOMContentLoaded",
+    initializeAuthentication
 );

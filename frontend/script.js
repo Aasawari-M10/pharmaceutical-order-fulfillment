@@ -14,11 +14,17 @@ const API_BASE =
 
 const msalConfig = {
     auth: {
-        clientId: "9b0384a4-878b-4d9b-b8db-9e4f28622b2c",
-        authority:
-            "https://pharmaordercustomers2026.ciamlogin.com/bc709ab2-033c-47ac-8af2-baa9ae6e645a",
-        redirectUri: window.location.origin
-    },
+    clientId: "9b0384a4-878b-4d9b-b8db-9e4f28622b2c",
+
+    authority:
+        "https://pharmaordercustomers2026.ciamlogin.com/bc709ab2-033c-47ac-8af2-baa9ae6e645a",
+
+    knownAuthorities: [
+        "pharmaordercustomers2026.ciamlogin.com"
+    ],
+
+    redirectUri: window.location.origin
+},
 
     cache: {
         cacheLocation: "sessionStorage",

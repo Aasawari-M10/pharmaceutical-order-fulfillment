@@ -4,6 +4,7 @@ const router = express.Router();
 
 const { sql, poolPromise } = require("../db");
 const { sendOrderMessage } = require("../serviceBus");
+const { getInventory } = require("../inventoryService");
 
 
 router.post("/", async (req, res) => {
@@ -39,7 +40,36 @@ router.post("/", async (req, res) => {
         const pool = await poolPromise;
 
 
-        // Find the customer associated with this Entra user
+        // --------------------------------------------------
+        // CHECK MEDICINE IN INVENTORY
+        // --------------------------------------------------
+
+        const inventory = await getInventory();
+
+        // Remove extra spaces and make medicine code uppercase
+        const normalizedMedicineCode =
+            String(medicineCode).trim().toUpperCase();
+
+
+        // Check whether medicine exists in inventory
+        const medicine =
+            inventory.items[normalizedMedicineCode];
+
+
+        if (!medicine) {
+
+            return res.status(400).json({
+                message:
+                    `Medicine ${normalizedMedicineCode} is not available in inventory.`
+            });
+
+        }
+
+
+        // --------------------------------------------------
+        // FIND CUSTOMER ASSOCIATED WITH LOGGED-IN USER
+        // --------------------------------------------------
+
         const customerResult = await pool.request()
 
             .input(
@@ -61,7 +91,8 @@ router.post("/", async (req, res) => {
         if (customerResult.recordset.length === 0) {
 
             return res.status(403).json({
-                message: "User is not registered with a customer organization"
+                message:
+                    "User is not registered with a customer organization"
             });
 
         }
@@ -74,11 +105,17 @@ router.post("/", async (req, res) => {
         const customerType = customer.CustomerType;
 
 
-        // Generate Order ID
+        // --------------------------------------------------
+        // GENERATE ORDER ID
+        // --------------------------------------------------
+
         const orderId = `ORD-${Date.now()}`;
 
 
-        // Insert order into database
+        // --------------------------------------------------
+        // INSERT ORDER INTO DATABASE
+        // --------------------------------------------------
+
         await pool.request()
 
             .input(
@@ -102,7 +139,7 @@ router.post("/", async (req, res) => {
             .input(
                 "MedicineCode",
                 sql.VarChar,
-                medicineCode
+                normalizedMedicineCode
             )
 
             .input(
@@ -139,7 +176,10 @@ router.post("/", async (req, res) => {
             `);
 
 
-        // Send message to Service Bus
+        // --------------------------------------------------
+        // SEND MESSAGE TO SERVICE BUS
+        // --------------------------------------------------
+
         const orderMessage = {
 
             orderId,
@@ -148,7 +188,7 @@ router.post("/", async (req, res) => {
 
             customerId,
 
-            medicineCode,
+            medicineCode: normalizedMedicineCode,
 
             quantity,
 
@@ -160,7 +200,10 @@ router.post("/", async (req, res) => {
         await sendOrderMessage(orderMessage);
 
 
-        // Response
+        // --------------------------------------------------
+        // RESPONSE
+        // --------------------------------------------------
+
         res.status(201).json({
 
             message: "Order Created",

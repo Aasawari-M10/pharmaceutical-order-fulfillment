@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -43,6 +42,7 @@
     <div class="background-shape shape-one"></div>
     <div class="background-shape shape-two"></div>
 
+
     <div class="app">
 
         <!-- ================= HEADER ================= -->
@@ -66,6 +66,7 @@
                 </div>
 
             </div>
+
 
             <div class="header-actions">
 
@@ -93,6 +94,7 @@
 
                 </div>
 
+
                 <button
                     id="loginButton"
                     class="btn btn-primary"
@@ -100,6 +102,7 @@
                 >
                     Login
                 </button>
+
 
                 <button
                     id="logoutButton"
@@ -114,6 +117,7 @@
 
         </header>
 
+
         <!-- ================= HERO ================= -->
 
         <section class="hero">
@@ -121,22 +125,35 @@
             <div class="hero-content">
 
                 <div class="hero-badge">
+
                     <span class="status-dot"></span>
+
                     Secure B2B Pharmaceutical Platform
+
                 </div>
 
+
                 <h2>
+
                     Manage pharmaceutical orders
-                    <span>securely and efficiently.</span>
+
+                    <span>
+                        securely and efficiently.
+                    </span>
+
                 </h2>
 
+
                 <p>
+
                     A secure digital platform for hospitals and
                     pharmacies to place, track, and manage
                     pharmaceutical orders.
+
                 </p>
 
             </div>
+
 
             <div class="hero-visual">
 
@@ -159,6 +176,7 @@
                     </div>
 
                 </div>
+
 
                 <div class="floating-card card-small">
 
@@ -184,6 +202,7 @@
 
         </section>
 
+
         <!-- ================= LOGIN MESSAGE ================= -->
 
         <section
@@ -194,6 +213,7 @@
             <div class="login-icon">
                 🔐
             </div>
+
 
             <div>
 
@@ -208,15 +228,22 @@
 
             </div>
 
+
             <button
                 class="btn btn-primary login-large"
                 onclick="login()"
             >
+
                 Sign in securely
-                <span>→</span>
+
+                <span>
+                    →
+                </span>
+
             </button>
 
         </section>
+
 
         <!-- ================= USER DASHBOARD ================= -->
 
@@ -224,6 +251,7 @@
             id="applicationContent"
             style="display: none;"
         >
+
 
             <!-- CUSTOMER INFORMATION -->
 
@@ -246,19 +274,25 @@
                         </h3>
 
                         <p>
+
                             Customer ID:
+
                             <strong id="customerId">
                                 Loading...
                             </strong>
+
                         </p>
 
                     </div>
 
                 </div>
 
+
                 <div class="secure-badge">
 
-                    <span>✓</span>
+                    <span>
+                        ✓
+                    </span>
 
                     Identity Verified
 
@@ -266,9 +300,11 @@
 
             </section>
 
+
             <!-- ================= DASHBOARD GRID ================= -->
 
             <div class="dashboard-grid">
+
 
                 <!-- CREATE ORDER -->
 
@@ -293,11 +329,13 @@
 
                         </div>
 
+
                         <div class="card-icon blue">
                             📦
                         </div>
 
                     </div>
+
 
                     <div class="form-group">
 
@@ -308,10 +346,11 @@
                         <input
                             type="text"
                             id="medicineCode"
-                            placeholder="Example: MED001"
+                            placeholder="Example: MED0001"
                         >
 
                     </div>
+
 
                     <div class="form-group">
 
@@ -328,6 +367,7 @@
 
                     </div>
 
+
                     <button
                         type="button"
                         class="btn btn-primary full-button"
@@ -336,13 +376,17 @@
 
                         Place Order
 
-                        <span>→</span>
+                        <span>
+                            →
+                        </span>
 
                     </button>
+
 
                     <div id="createResult"></div>
 
                 </section>
+
 
                 <!-- TRACK ORDER -->
 
@@ -367,11 +411,13 @@
 
                         </div>
 
+
                         <div class="card-icon purple">
                             🔎
                         </div>
 
                     </div>
+
 
                     <div class="form-group">
 
@@ -387,6 +433,7 @@
 
                     </div>
 
+
                     <button
                         type="button"
                         class="btn btn-secondary full-button"
@@ -395,15 +442,19 @@
 
                         Track Order
 
-                        <span>→</span>
+                        <span>
+                            →
+                        </span>
 
                     </button>
+
 
                     <div id="trackResult"></div>
 
                 </section>
 
             </div>
+
 
             <!-- ================= MEDICINES ================= -->
 
@@ -428,22 +479,30 @@
 
                     </div>
 
+
                     <button
                         type="button"
                         class="btn btn-secondary"
                         onclick="getMedicines()"
                     >
+
                         View Medicines
-                        <span>→</span>
+
+                        <span>
+                            →
+                        </span>
+
                     </button>
 
                 </div>
+
 
                 <div id="medicineList"></div>
 
             </section>
 
         </main>
+
 
         <!-- ================= FOOTER ================= -->
 
@@ -461,6 +520,7 @@
 
             </div>
 
+
             <div class="footer-security">
 
                 🔒 Identity protected by
@@ -468,12 +528,17 @@
 
             </div>
 
-            
-            <!-- <button onclick="debugToken()">Debug Token</button> -->
+            <!-- Debug button intentionally disabled -->
+            <!--
+            <button onclick="debugToken()">
+                Debug Token
+            </button>
+            -->
 
         </footer>
 
     </div>
+
 
     <!-- =========================================================
          MSAL Browser
@@ -485,13 +550,19 @@
         src="https://alcdn.msauth.net/browser/2.35.0/js/msal-browser.min.js"
     ></script>
 
+
     <script type="text/javascript">
+
         if (typeof msal === "undefined") {
+
             document.write(
                 '<script src="https://alcdn.msftauth.net/browser/2.35.0/js/msal-browser.min.js"><\/script>'
             );
+
         }
+
     </script>
+
 
     <!-- Your application JavaScript -->
 
@@ -500,4 +571,3 @@
 </body>
 
 </html>
-

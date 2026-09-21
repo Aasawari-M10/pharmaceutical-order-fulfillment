@@ -501,135 +501,108 @@ async function createOrder() {
 /* ============================================================
    10. TRACK ORDER
    ============================================================ */
-
 async function trackOrder() {
 
     const orderId =
-        document.getElementById(
-            "orderId"
-        ).value.trim();
-
+        document.getElementById("orderId").value.trim();
 
     if (!orderId) {
-
-        alert(
-            "Please enter Order ID."
-        );
-
+        alert("Please enter Order ID.");
         return;
     }
-
 
     try {
 
         const accessToken =
             await getAccessToken();
 
-
         const response =
             await fetch(
                 `${API_BASE}/orders/${orderId}`,
                 {
-
                     method: "GET",
 
                     headers: {
-
                         "Authorization":
                             `Bearer ${accessToken}`
-
                     }
-
                 }
             );
 
-
         const data =
             await response.json();
-
 
         console.log(
             "TRACK ORDER RESPONSE:",
             data
         );
 
-
         if (!response.ok) {
-
             throw new Error(
                 data.message ||
                 "Order not found."
             );
-
         }
 
 
-        /* ----------------------------------------------------
-           CANCELLATION REASON
-           ---------------------------------------------------- */
+        // ---------------------------------------------
+        // CANCELLATION REASON
+        // ---------------------------------------------
 
         let cancellationReason = "";
-
 
         if (
             data.Status &&
             data.Status.toUpperCase() === "CANCELLED"
         ) {
 
-            let reason =
-                data.StatusMessage ||
-                "Not specified";
+            const statusMessage =
+                data.StatusMessage || "";
 
+            const upperMessage =
+                statusMessage.toUpperCase();
 
-            const upperReason =
-                reason.toUpperCase();
-
-
-            /*
-             * Convert backend status messages
-             * into user-friendly messages.
-             */
 
             if (
-                upperReason.includes(
-                    "OUT_OF_STOCK"
-                )
+                upperMessage.includes("OUT_OF_STOCK")
             ) {
 
-                reason =
-                    "Out of Stock";
+                cancellationReason = `
+                    <br>
+                    <strong>
+                        Cancellation Reason:
+                    </strong>
+                    Out of Stock
+                `;
 
-            }
-
-            else if (
-                upperReason.includes(
-                    "MEDICINE_NOT_FOUND"
-                )
+            } else if (
+                upperMessage.includes("MEDICINE_NOT_FOUND")
             ) {
 
-                reason =
-                    "Medicine not found";
+                cancellationReason = `
+                    <br>
+                    <strong>
+                        Cancellation Reason:
+                    </strong>
+                    Medicine Not Found
+                `;
 
+            } else {
+
+                cancellationReason = `
+                    <br>
+                    <strong>
+                        Cancellation Reason:
+                    </strong>
+                    ${statusMessage || "Not specified"}
+                `;
             }
-
-
-            cancellationReason = `
-
-                <br>
-
-                <strong>
-                    Cancellation Reason:
-                </strong>
-
-                ${reason}
-
-            `;
         }
 
 
-        /* ----------------------------------------------------
-           DISPLAY ORDER
-           ---------------------------------------------------- */
+        // ---------------------------------------------
+        // DISPLAY ORDER
+        // ---------------------------------------------
 
         document.getElementById(
             "trackResult"
@@ -643,63 +616,49 @@ async function trackOrder() {
 
                 <br><br>
 
-
                 <strong>
                     Order ID:
                 </strong>
-
                 ${data.OrderId}
 
                 <br>
 
-
                 <strong>
                     Customer ID:
                 </strong>
-
                 ${data.CustomerId}
 
                 <br>
 
-
                 <strong>
                     Customer Type:
                 </strong>
-
                 ${data.CustomerType}
 
                 <br>
 
-
                 <strong>
                     Medicine:
                 </strong>
-
                 ${data.MedicineCode}
 
                 <br>
 
-
                 <strong>
                     Quantity:
                 </strong>
-
                 ${data.Quantity}
 
                 <br>
 
-
                 <strong>
                     Status:
                 </strong>
-
                 ${data.Status}
-
 
                 ${cancellationReason}
 
             </div>
-
         `;
 
 
@@ -710,19 +669,13 @@ async function trackOrder() {
             error
         );
 
-
         document.getElementById(
             "trackResult"
         ).innerHTML = `
-
             <div class="error">
-
                 ❌ ${error.message}
-
             </div>
-
         `;
-
     }
 }
 

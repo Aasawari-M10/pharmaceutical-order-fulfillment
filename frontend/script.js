@@ -732,52 +732,37 @@ async function trackOrder() {
    ============================================================ */
 
 async function getMedicines() {
-
     try {
 
         const accessToken =
             await getAccessToken();
 
-
         const response =
             await fetch(
                 `${API_BASE}/medicines`,
                 {
-
                     method: "GET",
 
                     headers: {
-
                         "Authorization":
                             `Bearer ${accessToken}`
-
                     }
-
                 }
             );
-
 
         const medicines =
             await response.json();
 
-
         if (!response.ok) {
-
             throw new Error(
                 "Unable to load medicines."
             );
-
         }
 
-
         let html = `
-
             <table>
-
                 <thead>
-
                     <tr>
-
                         <th>
                             Medicine Code
                         </th>
@@ -785,81 +770,50 @@ async function getMedicines() {
                         <th>
                             Medicine Name
                         </th>
-
-                        <th>
-                            Stock
-                        </th>
-
                     </tr>
-
                 </thead>
 
                 <tbody>
-
         `;
 
+        medicines.forEach((medicine) => {
 
-        medicines.forEach(
-            (medicine) => {
+            html += `
+                <tr>
+                    <td>
+                        ${medicine.medicineCode}
+                    </td>
 
-                html += `
+                    <td>
+                        ${medicine.medicineName}
+                    </td>
+                </tr>
+            `;
 
-                    <tr>
-
-                        <td>
-                            ${medicine.medicineCode}
-                        </td>
-
-                        <td>
-                            ${medicine.medicineName}
-                        </td>
-
-                        <td>
-                            ${medicine.stock}
-                        </td>
-
-                    </tr>
-
-                `;
-
-            }
-        );
-
+        });
 
         html += `
-
                 </tbody>
-
             </table>
-
         `;
-
 
         document.getElementById(
             "medicineList"
         ).innerHTML = html;
 
-
     } catch (error) {
 
         console.error(error);
 
-
         document.getElementById(
             "medicineList"
         ).innerHTML = `
-
             <div class="error">
-
                 ❌ Failed to load medicines.
-
             </div>
-
         `;
-
     }
 }
-
 
 /* ============================================================
    TESTING
